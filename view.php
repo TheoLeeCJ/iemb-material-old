@@ -26,22 +26,31 @@
 	$dom = new DOMDocument();
 	@$dom->loadHTML($content);
 ?>
+
 <!DOCTYPE html>
 <html lang='en-SG'>
 <head>
-	<title>iEMB</title>
+	<title>Student Board | iEMB 2.0</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 	<style>
 		html {
 			font: 1em/1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
 			height: 100%;
 		}
-		body {margin: 0;}
+		body {
+			margin: 0;
+			cursor: default;
+		}
 		header {
 			background-color: #f44336;
 			color: #fff;
 			line-height: 3rem;
 			font-size: 1.5rem;
 			padding: 0 1.5rem;
+			position: fixed;
+			z-index: 2;
+			width: calc(100% - 48px);
 		}
 		header #right {float: right;}
 		header #header-logout {
@@ -103,6 +112,7 @@
 			left: 0;
 			bottom: 0;
 			right: 0;
+			z-index: 299;
 			transition: opacity 350ms ease-in-out;
 		}
 		#navOpen:checked ~ #navOverlay {
@@ -141,6 +151,10 @@
 			width: 40%;
 			float: left;
 			border-right: 1px solid #000;
+			position: absolute;
+			top: 83px;
+			height: calc(100% - 83px);
+			overflow-y: scroll;
 		}
 		.message {
 			color: #000;
@@ -150,6 +164,7 @@
 			margin: 0 .5rem;
 			padding-top: .5rem;
 			padding-bottom: 1rem;
+			padding-left: .5rem; padding-right: .5rem;
 			cursor: pointer;
 		}
 		.message-header, .message-date, .message-username {
@@ -170,90 +185,268 @@
 		#message-view {
 			width: calc(60% - 2px);
 			float: left;
+			position: fixed;
+			top: 48px;
+			height: calc(100% - 48px);
+			left: 40%;
+			overflow-y: scroll;
+		}
+		#search {
+			width: calc(40% - 15px);
+			float: left;
+			border: 0;
+			border-bottom: 1px solid #000;
+			border-right: 1px solid #000;
+			position: fixed;
+			top: 48px;
+			padding: 7.5px;
+			font-size: 1em;
 		}
 	</style>
+
+  <!--JSON parsing + search function-->
+  <script>
+    function UpdateSearchResults() {
+			if (document.getElementById("search").value == "") {
+				ParseMessages();
+
+				var messages = document.getElementsByClassName('message');
+				selectMessage = messages[0].id;
+				for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
+			}
+			else {
+      	SearchMessages(document.getElementById("search").value);
+
+				var messages = document.getElementsByClassName('message');
+				selectMessage = messages[0].id;
+				for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
+			}
+    }
+
+    function SearchMessages(searchString) {
+      var resultsTable = document.getElementById("message-container"); //CHANGE TO ID OF TABLE FOR SEARCH RESULTS
+      resultsTable.innerHTML = "";
+
+      var unread = JSON.parse(document.getElementById("UnreadMessagesJSON").innerHTML);
+      var read = JSON.parse(document.getElementById("ReadMessagesJSON").innerHTML);
+
+      var messagesParsed = 0;
+
+      while (messagesParsed < unread.length) {
+        if ((unread[messagesParsed].messageDate.trim().includes(searchString) == true) || (unread[messagesParsed].messageAuthor.trim().includes(searchString) == true) || (unread[messagesParsed].messageTitle.trim().includes(searchString) == true)) {
+					var messageRow = document.createElement("div");
+					messageRow.setAttribute("id", "a" + unread[messagesParsed].url.substr(31));
+					messageRow.className = "message";
+
+					var messageDate = document.createElement("div");
+					messageDate.innerHTML = unread[messagesParsed].messageDate.trim();
+					messageDate.className = "message-date";
+					messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
+					
+					var messageHeading = document.createElement("div");
+					messageHeading.innerHTML = unread[messagesParsed].messageTitle.trim();
+					messageHeading.className = "message-header";
+					messageHeading.style.fontWeight = "bold";
+					messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
+
+					var messageAuthor = document.createElement("div");
+					messageAuthor.innerHTML = unread[messagesParsed].messageAuthor.trim();
+					messageAuthor.className = "message-username";
+					messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
+
+					resultsTable.innerHTML = resultsTable.innerHTML + messageRow.outerHTML;
+        }
+
+        messagesParsed++;
+      }
+
+      messagesParsed = 0;
+
+      while (messagesParsed < read.length) {
+        if ((read[messagesParsed].messageDate.trim().includes(searchString) == true) || (read[messagesParsed].messageAuthor.trim().includes(searchString) == true) || (read[messagesParsed].messageTitle.trim().includes(searchString) == true)) {
+					var messageRow = document.createElement("div");
+					messageRow.setAttribute("id", "a" + read[messagesParsed].url.substr(31));
+					messageRow.className = "message";
+
+					var messageDate = document.createElement("div");
+					messageDate.innerHTML = read[messagesParsed].messageDate.trim();
+					messageDate.className = "message-date";
+					messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
+					
+					var messageHeading = document.createElement("div");
+					messageHeading.innerHTML = read[messagesParsed].messageTitle.trim();
+					messageHeading.className = "message-header";
+					messageHeading.style.fontWeight = "bold";
+					messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
+
+					var messageAuthor = document.createElement("div");
+					messageAuthor.innerHTML = read[messagesParsed].messageAuthor.trim();
+					messageAuthor.className = "message-username";
+					messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
+
+					resultsTable.innerHTML = resultsTable.innerHTML + messageRow.outerHTML;
+        }
+
+        messagesParsed++;
+      }
+    }
+
+    function ParseMessages() {
+      var outputDiv = document.getElementById("message-container");
+
+      //UNREAD MESSAGES
+      var messagesToGet = JSON.parse(document.getElementById("UnreadMessagesJSON").innerHTML);
+      var messagesParsed = 0;
+
+      while (messagesParsed < messagesToGet.length) {
+        var messageRow = document.createElement("div");
+				messageRow.setAttribute("id", "a" + messagesToGet[messagesParsed].url.substr(31));
+				messageRow.className = "message";
+
+        var messageDate = document.createElement("div");
+				messageDate.innerHTML = messagesToGet[messagesParsed].messageDate.trim();
+				messageDate.className = "message-date";
+				messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
+        
+        var messageHeading = document.createElement("div");
+        messageHeading.innerHTML = messagesToGet[messagesParsed].messageTitle.trim();
+				messageHeading.className = "message-header";
+				messageHeading.style.fontWeight = "bold";
+				messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
+
+        var messageAuthor = document.createElement("div");
+				messageAuthor.innerHTML = messagesToGet[messagesParsed].messageAuthor.trim();
+				messageAuthor.className = "message-username";
+				messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
+
+				outputDiv.innerHTML = outputDiv.innerHTML + messageRow.outerHTML;
+        messagesParsed++;
+      }
+
+      //READ MESSAGES
+      messagesToGet = JSON.parse(document.getElementById("ReadMessagesJSON").innerHTML);
+      messagesParsed = 0;
+
+      while (messagesParsed < messagesToGet.length) {
+        var messageRow = document.createElement("div");
+				messageRow.setAttribute("id", "a" + messagesToGet[messagesParsed].url.substr(31));
+				messageRow.className = "message";
+
+        var messageDate = document.createElement("div");
+				messageDate.innerHTML = messagesToGet[messagesParsed].messageDate.trim();
+				messageDate.className = "message-date";
+				messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
+        
+        var messageHeading = document.createElement("div");
+        messageHeading.innerHTML = messagesToGet[messagesParsed].messageTitle.trim();
+				messageHeading.className = "message-header";
+				messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
+
+        var messageAuthor = document.createElement("div");
+				messageAuthor.innerHTML = messagesToGet[messagesParsed].messageAuthor.trim();
+				messageAuthor.className = "message-username";
+				messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
+
+        outputDiv.innerHTML = outputDiv.innerHTML + messageRow.outerHTML;
+        messagesParsed++;
+      }
+    }
+  </script>
 </head>
+
 <body>
-<header>
-	<label for='navOpen'>☰</label> iEMB 2.0
-	<div id='right'><span id='header-name'>Welcome, <?php echo $username; ?></span><a href='logout.php' id='header-logout'>Log Out</a></div>
-</header>
-<input type='checkbox' id='navOpen'>
-<nav>
-	<img src='logo.svg'>
-	<a href='view.php?board=1048'>Student</a>
-	<a href='view.php?board=1050'>Lost &amp; Found</a>
-	<a href='view.php?board=1049'>PSB</a>
-	<a href='view.php?board=1039'>Service</a>
-	<a href='view.php?board=1053'>Let's Serve!</a>
-	<!-- Problematic in PHP, don't know why -->
-</nav>
-<label for='navOpen' id='navOverlay'></label>
-<div id='message-container'>
-<?php
-	// min not defined for service and let's serve, assuming to be 2
-	$min = 1;
-	// elseif ($_GET['board'] == 1050) $min = 2;
-	// elseif ($_GET['board'] == 1049) $min = 2;
-	$a = 0;
-	foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
-		if ($key < $min) continue;
-		$text = $row->getElementsByTagName('td')->item(2);
-		if (is_null($text)) break;
-		$href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
-		echo '<div id="a' . substr($href, 15, -11) . '" class="message">';
-			// Date
-			$text = $row->getElementsByTagName('td')->item(0)->textContent;
-			echo '<div class="message-date">' . substr($text, -60, -58) . ' ' . substr($text, -57, -54) . '</div>';
-			// Heading
-			$text = $row->getElementsByTagName('td')->item(2);
-			echo '<div class="message-header"><strong>' . $text->textContent . '</strong></div>';
-			// Username
-			$text = $row->getElementsByTagName('td')->item(1)->textContent;
-			echo '<div class="message-username">' . substr($text, 0, -112) . '</div>';
-		echo '</div>';
-		$a += 1;
-	}
-	foreach ($dom->getElementById('tab_table1')->getElementsByTagName('tr') as $key=>$row) {
-		if ($key < $min) continue;
-		$text = $row->getElementsByTagName('td')->item(2);
-		if (is_null($text)) break;
-		if ($row->getElementsByTagName('td')->item(2)->textContent === '') echo 'yay';
-		$href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
-		echo '<div id="a' . substr($href, 15, -11) . '" class="message">';
-			// Date
-			$text = $row->getElementsByTagName('td')->item(0)->textContent;
-			echo '<div class="message-date">' . substr($text, 0, 2) . ' ' . substr($text, 3, 3) . '</div>';
-			// Heading
-			// Real: /Board/content/26433?board=1048
-			$text = $row->getElementsByTagName('td')->item(2);
-			echo '<div class="message-header">' . $text->textContent . '</div>';
-			// Username
-			$text = $row->getElementsByTagName('td')->item(1)->textContent;
-			echo '<div class="message-username">' . substr($text, 0, -112) . '</div>';
-		echo '</div>';
-		$a += 1;
-	}
-	echo '</div>';
-	if ($a === 0) echo '<div class="message"><strong>No messages</strong></div>';
-?>
-</div>
-<div id='message-view'></div>
-<script>
-	var messages = document.getElementsByClassName('message');
-	selectMessage = messages[0].id;
-	for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
-	function getMessage() {
-		document.getElementById(selectMessage.toString()).removeAttribute('style');
-		this.style.backgroundColor = '#ff8a80';
-		selectMessage = this.id;
-		var request = new XMLHttpRequest();
-		request.onreadystatechange = function() {
-			if (this.readyState === 4 && this.status === 200) document.getElementById('message-view').innerHTML = this.responseText;
-		};
-		request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
-		request.send();
-	}
-</script>
+	<header>
+		<label for='navOpen'>&#x2630;</label> iEMB 2.0
+		<div id='right'><span id='header-name'>Welcome, <?php echo $username; ?></span><a href='logout.php' id='header-logout'>Log Out</a></div>
+	</header>
+	<input type='checkbox' id='navOpen'>
+	<nav>
+		<img src='logo.svg'>
+		<a href='view.php?board=1048'>Student</a>
+		<a href='view.php?board=1050'>Lost &amp; Found</a>
+		<a href='view.php?board=1049'>PSB</a>
+		<a href='view.php?board=1039'>Service</a>
+		<a href='view.php?board=1053'>Let's Serve!</a>
+		<!-- Problematic in PHP, don't know why -->
+	</nav>
+	<label for='navOpen' id='navOverlay'></label>
+
+  <!--SEARCH-->
+	<input onkeyup="UpdateSearchResults();" id="search" placeholder="Search..." />
+
+  <!--MESSAGES-->
+  <div id="message-container"></div>
+	<div id="message-view"></div>
+
+  <?php
+    $a = 0; $unreadMessagesAsObject = []; $messagesParsed = 0;
+    foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
+      if ($key === 0) continue;
+      // Date
+      $text = $row->getElementsByTagName('td')->item(0)->textContent;
+      $unreadMessagesAsObject[$messagesParsed]["messageDate"] = substr($text, -60, -58) . ' ' . substr($text, -57, -54);
+
+      // Username
+      $text = $row->getElementsByTagName('td')->item(1)->textContent;
+      $unreadMessagesAsObject[$messagesParsed]["messageAuthor"] = substr($text, 0, -112);
+
+      // Heading
+      $text = $row->getElementsByTagName('td')->item(2);
+      $href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
+      $href = 'msg.php?board=' . substr($href, -4) . '&message=' . substr($href, 15, -11);
+      // Real: /Board/content/26433?board=1048
+      $unreadMessagesAsObject[$messagesParsed]["url"] = $href;
+      $unreadMessagesAsObject[$messagesParsed]["messageTitle"] = $text->textContent;
+
+      $messagesParsed++; //Also can be used to show number of messages
+    }
+
+    echo "<div id='UnreadMessagesJSON' style='display: none;'>" . json_encode($unreadMessagesAsObject) . "</div>";
+  ?>
+
+  <?php
+    $a = 0; $readMessagesAsObject = []; $messagesParsed = 0;
+    foreach ($dom->getElementById('tab_table1')->getElementsByTagName('tr') as $key=>$row) {
+      if ($key === 0) continue;
+      // Date
+      $text = $row->getElementsByTagName('td')->item(0)->textContent;
+      $readMessagesAsObject[$messagesParsed]["messageDate"] = substr($text, 0, 2) . ' ' . substr($text, 3, 3);
+
+      // Username
+      $text = $row->getElementsByTagName('td')->item(1)->textContent;
+      $readMessagesAsObject[$messagesParsed]["messageAuthor"] = substr($text, 0, -112);
+
+      // Heading
+      $text = $row->getElementsByTagName('td')->item(2);
+		  $href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
+		  $href = 'msg.php?board=' . substr($href, -4) . '&message=' . substr($href, 15, -11);
+      // Real: /Board/content/26433?board=1048
+      $readMessagesAsObject[$messagesParsed]["url"] = $href;
+      $readMessagesAsObject[$messagesParsed]["messageTitle"] = $text->textContent;
+
+      $messagesParsed++;
+    }
+
+    echo "<div id='ReadMessagesJSON' style='display: none;'>" . json_encode($readMessagesAsObject) . "</div>";
+  ?>
+
+  <script>
+    ParseMessages();
+
+		var messages = document.getElementsByClassName('message');
+		selectMessage = messages[0].id;
+		for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
+		function getMessage() {
+			document.getElementById(selectMessage.toString()).removeAttribute('style');
+			this.style.backgroundColor = '#ff8a80';
+			selectMessage = this.id;
+			var request = new XMLHttpRequest();
+			request.onreadystatechange = function() {
+				if (this.readyState === 4 && this.status === 200) document.getElementById('message-view').innerHTML = this.responseText;
+			};
+			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
+			request.send();
+		}
+  </script>
 </body>
 </html>
