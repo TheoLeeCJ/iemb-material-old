@@ -387,6 +387,7 @@
 			messagesParsed++;
 			}
 		}
+		var messages;
 		document.addEventListener('DOMContentLoaded', function(){
 			parseMessages();
 			messages = document.getElementsByClassName('message');
