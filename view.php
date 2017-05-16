@@ -29,7 +29,7 @@
 	$a = 0; $unreadMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
 		if ($key < 1) continue;
-		if ($row->getElementsByTagName('td')->item(0)->textContent == file_get_contents('viewed.txt')) break;
+		if ($row->getElementsByTagName('td')->item(0)->textContent == file_get_contents('viewed_box1.txt')) break;
 		$text = $row->getElementsByTagName('td')->item(0)->textContent;
 		$unreadMessagesAsObject[$messagesParsed]['messageDate'] = substr($text, -60, -58) . ' ' . substr($text, -57, -54);
 
@@ -49,7 +49,8 @@
 	}
 	$a = 0; $readMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table1')->getElementsByTagName('tr') as $key=>$row) {
-		if ($key === 0) continue;
+		if ($key < 1) continue;
+		if ($row->getElementsByTagName('td')->item(0)->textContent == file_get_contents('viewed_box2.txt')) break;
 		// Date
 		$text = $row->getElementsByTagName('td')->item(0)->textContent;
 		$readMessagesAsObject[$messagesParsed]['messageDate'] = substr($text, 0, 2) . ' ' . substr($text, 3, 3);
@@ -60,8 +61,8 @@
 
 		// Heading
 		$text = $row->getElementsByTagName('td')->item(2);
-			$href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
-			$href = 'msg.php?board=' . substr($href, -4) . '&message=' . substr($href, 15, -11);
+		$href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
+		$href = 'msg.php?board=' . substr($href, -4) . '&message=' . substr($href, 15, -11);
 		// Real: /Board/content/26433?board=1048
 		$readMessagesAsObject[$messagesParsed]['url'] = $href;
 		$readMessagesAsObject[$messagesParsed]['messageTitle'] = $text->textContent;
@@ -405,11 +406,9 @@
 		function readAll() {
 			var event = document.createEvent('Events');
 			event.initEvent('click', true, false);
-			for (i = 0; i < messagesUnread; i++) {
-				messages[messagesUnread].dispatchEvent(event);
-			}
+			for (i = 0; i < messagesUnread; i++) messages[i].dispatchEvent(event);
 		}
-		document.addEventListener('DOMContentLoaded', function(){
+		document.addEventListener('DOMContentLoaded', function() {
 			parseMessages();
 			refreshView();
 			document.getElementById('header-read').addEventListener('click', readAll, false);
