@@ -27,8 +27,8 @@
 	@$dom->loadHTML($content);
 	$a = 0; $unreadMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
-		if ($key === 0) continue;
-		// Date
+		if ($key < 1) continue;
+		if ($row->getElementsByTagName('td')->item(0)->textContent == file_get_contents('viewed.txt')) break;
 		$text = $row->getElementsByTagName('td')->item(0)->textContent;
 		$unreadMessagesAsObject[$messagesParsed]['messageDate'] = substr($text, -60, -58) . ' ' . substr($text, -57, -54);
 
@@ -244,6 +244,7 @@
 			font-size: 1rem;
 			outline: none;
 			padding: .5rem 1rem;
+			/*margin-bottom: .1rem;*/
 		}
 	</style>
 	<script>
@@ -390,8 +391,8 @@
 			parseMessages();
 			messages = document.getElementsByClassName('message');
 			selectMessage = messages[0].id;
+			for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);	
 		});
-		for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
 		function getMessage() {
 			document.getElementById(selectMessage.toString()).removeAttribute('style');
 			this.style.backgroundColor = '#ff8a80';
