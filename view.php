@@ -395,22 +395,25 @@
 			messages = document.getElementsByClassName('message');
 			selectMessage = messages[0].id;
 			for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
-			if (window.innerWidth < 800) for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', function(){document.getElementById('slider').style.transform = 'translateX(-50%)'}, false);
+			mobileRefresh();
 		}
+		function mobileRefresh() {
+			if (window.innerWidth < 800) for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', transformSlider, false);
+			else for (i = 0; i < messages.length; i++) messages[i].removeEventListener('click', transformSlider, false);
+		}
+		function transformSlider() {document.getElementById('slider').style.transform = 'translateX(-50%)'};
 		function readAll() {
+			var event = document.createEvent('Events');
+			event.initEvent('click', true, false);
 			for (i = 0; i < messagesUnread; i++) {
-				var clickEvent = new MouseEvent('click', {
-					'view': window,
-					'bubbles': true,
-					'cancelable': false
-				});
-				messages[messagesUnread].dispatchEvent(clickEvent);
+				messages[messagesUnread].dispatchEvent(event);
 			}
 		}
 		document.addEventListener('DOMContentLoaded', function(){
 			parseMessages();
 			refreshView();
 			document.getElementById('header-read').addEventListener('click', readAll, false);
+			window.addEventListener('resize', mobileRefresh);
 		});
 	</script>
 </head>
