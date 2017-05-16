@@ -1,3 +1,4 @@
+<!-- LINE 88 -->
 <?php
 	session_start();
 	if (isset($_SESSION['logged_in'])) {
@@ -83,6 +84,9 @@
 		body {
 			margin: 0;
 			cursor: default;
+			height: 100%;
+			/*overflow: hidden;*/
+			/*Uncomment when back button implemented*/
 		}
 		header {
 			background-color: #f44336;
@@ -99,10 +103,6 @@
 			color: #fff;
 			text-decoration: none;
 			margin-left: 1rem;
-		}
-		@media screen and (max-width: 800px) {
-			#header-name {display: none;}
-			header {padding: 0 .75rem;}
 		}
 		nav {
 			display: block;
@@ -164,38 +164,13 @@
 		#navOpen {display: none;}
 		label {cursor: pointer;}
 		td {border-top: 1px solid #ccc;}
-		table {
-			border-collapse: collapse;
-		}
-		td, th {
-			padding: .35rem;
-			white-space: nowrap;
-			text-align: center;
-			overflow: hidden;
-		}
-		td:first-child {
-			max-width: 3rem;
-			width: 3rem;
-		}
-		td:nth-child(2n) {
-			max-width: 5rem;
-			width: 5rem;
-			text-overflow: ellipsis;
-		}
-		td:last-child {
-			text-align: left;
-			width: calc(100vw - 8rem - 2.1rem);
-			max-width: calc(100vw - 8rem - 2.1rem);
-			white-space: nowrap;
-			text-overflow: ellipsis;
-		}
 		#message-container {
 			width: 40%;
 			float: left;
 			border-right: 1px solid #000;
 			position: absolute;
-			top: 83px;
-			height: calc(100% - 83px);
+			top: 85px;
+			height: 100%;
 			overflow-y: scroll;
 		}
 		.message {
@@ -226,11 +201,10 @@
 		#view-body {padding: 0 calc(1rem - 5px);}
 		#message-view {
 			width: calc(60% - 2px);
-			float: left;
-			position: fixed;
+			position: absolute;
 			top: 48px;
-			height: calc(100% - 48px);
-			left: 40%;
+			right: 0;
+			height: calc(100% + 34px);
 			overflow-y: scroll;
 		}
 		#search {
@@ -246,22 +220,41 @@
 			padding: .5rem 1rem;
 			/*margin-bottom: .1rem;*/
 		}
+		#slider {
+			width: 100%;
+			position: relative;
+			height: calc(100% - 83px);
+			transition: 200ms ease-in-out transform;
+		}
+		@media screen and (max-width: 800px) {
+			#header-name {display: none;}
+			header {
+				padding: 0 .75rem;
+				width: calc(100% - 1.5rem);
+			}
+			#search {
+				width: calc(50% - 2rem);
+				position: relative;
+				border-right: none;
+			}
+			#message-container, #message-view {
+				border: none;
+				width: 50%;
+				height: 100%;
+			}
+			#slider {width: 200%;}
+		}
 	</style>
 	<script>
 		function updateSearchResults() {
 				if (document.getElementById('search').value === '') {
 					document.getElementById('message-container').innerHTML = '';
-					parseMessages();
-					var messages = document.getElementsByClassName('message');
-					selectMessage = messages[0].id;
-					for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
+					refreshView();
 				}
 				else {
 					document.getElementById('message-container').innerHTML = '';
 					searchMessages(document.getElementById('search').value.toLowerCase());
-					var messages = document.getElementsByClassName('message');
-					selectMessage = messages[0].id;
-					for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
+					refreshView();
 				}
 		}
 
@@ -332,36 +325,36 @@
 
 			//UNREAD MESSAGES
 			var messagesToGet = JSON.parse(document.getElementById('unreadMessagesJSON').innerHTML);
-			var messagesParsed = 0;
+			messagesUnread = 0;
 
-			while (messagesParsed < messagesToGet.length) {
+			while (messagesUnread < messagesToGet.length) {
 				var messageRow = document.createElement('div');
-				messageRow.setAttribute('id', 'a' + messagesToGet[messagesParsed].url.substr(31));
+				messageRow.setAttribute('id', 'a' + messagesToGet[messagesUnread].url.substr(31));
 				messageRow.className = 'message';
 
 				var messageDate = document.createElement('div');
-				messageDate.innerHTML = messagesToGet[messagesParsed].messageDate.trim();
+				messageDate.innerHTML = messagesToGet[messagesUnread].messageDate.trim();
 				messageDate.className = 'message-date';
 				messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
 				
 				var messageHeading = document.createElement('div');
-				messageHeading.innerHTML = messagesToGet[messagesParsed].messageTitle.trim();
+				messageHeading.innerHTML = messagesToGet[messagesUnread].messageTitle.trim();
 				messageHeading.className = 'message-header';
 				messageHeading.style.fontWeight = 'bold';
 				messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
 
 				var messageAuthor = document.createElement('div');
-				messageAuthor.innerHTML = messagesToGet[messagesParsed].messageAuthor.trim();
+				messageAuthor.innerHTML = messagesToGet[messagesUnread].messageAuthor.trim();
 				messageAuthor.className = 'message-username';
 				messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
 
 				outputDiv.innerHTML = outputDiv.innerHTML + messageRow.outerHTML;
-				messagesParsed++;
+				messagesUnread++;
 			}
 
 			//READ MESSAGES
 			messagesToGet = JSON.parse(document.getElementById('readMessagesJSON').innerHTML);
-			messagesParsed = 0;
+			var messagesParsed = 0;
 
 			while (messagesParsed < messagesToGet.length) {
 			var messageRow = document.createElement('div');
@@ -387,13 +380,6 @@
 			messagesParsed++;
 			}
 		}
-		var messages;
-		document.addEventListener('DOMContentLoaded', function(){
-			parseMessages();
-			messages = document.getElementsByClassName('message');
-			selectMessage = messages[0].id;
-			for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);	
-		});
 		function getMessage() {
 			document.getElementById(selectMessage.toString()).removeAttribute('style');
 			this.style.backgroundColor = '#ff8a80';
@@ -405,13 +391,38 @@
 			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
 			request.send();
 		}
+		function refreshView() {
+			messages = document.getElementsByClassName('message');
+			selectMessage = messages[0].id;
+			for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
+			if (window.innerWidth < 800) for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', function(){document.getElementById('slider').style.transform = 'translateX(-50%)'}, false);
+		}
+		function readAll() {
+			for (i = 0; i < messagesUnread; i++) {
+				var clickEvent = new MouseEvent('click', {
+					'view': window,
+					'bubbles': true,
+					'cancelable': false
+				});
+				messages[messagesUnread].dispatchEvent(clickEvent);
+			}
+		}
+		document.addEventListener('DOMContentLoaded', function(){
+			parseMessages();
+			refreshView();
+			document.getElementById('header-read').addEventListener('click', readAll, false);
+		});
 	</script>
 </head>
 
 <body>
 	<header>
 		<label for='navOpen'>&#x2630;</label> iEMB 2.0
-		<div id='right'><span id='header-name'>Welcome, <?php echo $username; ?></span><a href='logout.php' id='header-logout'>Log Out</a></div>
+		<div id='right'>
+			<span id='header-name'>Welcome, <?php echo $username; ?></span>
+			<span id='header-read'>Read all</span>
+			<a href='logout.php' id='header-logout'>Log Out</a>
+		</div>
 	</header>
 	<input type='checkbox' id='navOpen'>
 	<nav>
@@ -425,12 +436,12 @@
 	<label for='navOpen' id='navOverlay'></label>
 
 	<!--SEARCH-->
-	<input onkeyup='updateSearchResults();' id='search' placeholder='Search...' />
-
-	<!--MESSAGES-->
-	<div id='message-container'></div>
-	<div id='message-view'></div>
-
+	<div id='slider'>
+		<input onkeyup='updateSearchResults();' id='search' placeholder='Search...' />
+		<!--MESSAGES-->
+		<div id='message-container'></div>
+		<div id='message-view'></div>
+	</div>
 	<?php
 		echo '<div id=\'unreadMessagesJSON\' style=\'display: none;\'>' . json_encode($unreadMessagesAsObject) . '</div>';
 		echo '<div id=\'readMessagesJSON\' style=\'display: none;\'>' . json_encode($readMessagesAsObject) . '</div>';
