@@ -247,6 +247,8 @@
 		}
 	</style>
 	<script>
+		if (window.location.href.includes("http://") == true) { window.location.href = "https://iemb.000webhostapp.com/"; }
+
 		function updateSearchResults() {
 				if (document.getElementById('search').value === '') {
 					document.getElementById('message-container').innerHTML = '';
