@@ -246,18 +246,20 @@
 			#slider {width: 200%;}
 		}
 	</style>
+
 	<script>
 		if (window.location.href.includes("http://") == true) { window.location.href = "https://iemb.000webhostapp.com/"; }
-
+	</script>
+	
+	<script>
 		function updateSearchResults() {
 				if (document.getElementById('search').value === '') {
 					document.getElementById('message-container').innerHTML = '';
-					refreshView();
+					parseMessages();
 				}
 				else {
 					document.getElementById('message-container').innerHTML = '';
 					searchMessages(document.getElementById('search').value.toLowerCase());
-					refreshView();
 				}
 		}
 

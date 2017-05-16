@@ -119,6 +119,10 @@
 			100% {transform: translateX(-50%);}
 		}
 	</style>
+
+	<script>
+		if (window.location.href.includes("http://") == true) { window.location.href = "https://iemb.000webhostapp.com/"; }
+	</script>
 </head>
 <body>
 	<div id='background-container'><img src='background.svg' id='background'></div>
