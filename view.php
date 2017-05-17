@@ -1,10 +1,9 @@
-<!-- LINE 88 -->
 <?php
 	session_start();
 	if (isset($_SESSION['logged_in'])) {
 		if (!isset($_SESSION['username']) || !isset($_SESSION['password'])) {
-			header('Location: index.php?again=true');
-			exit('An error has occured. Please log in again <a href=\'index.php\'>here</a>');
+			header('Location: index.php');
+			exit();
 		}
 	}
 	$username = $_SESSION['username'];
@@ -19,7 +18,7 @@
 	curl_exec($ch);
 	if (!isset($_GET['board'])) {
 		header('Location: view.php?board=1048');
-		exit('<a href=\'view.php?board=1048\'>Click here to reload</a>');
+		exit();
 	}
 	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/Board/Detail/' . $_GET['board']);
 	$content = curl_exec($ch);
@@ -80,14 +79,16 @@
 	<style>
 		html {
 			font: 1em/1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-			height: 100%;
+			overflow: hidden;
 		}
 		body {
 			margin: 0;
 			cursor: default;
-			height: 100%;
-			/*overflow: hidden;*/
-			/*Uncomment when back button implemented*/
+			position: absolute;
+			top: 0;
+			right: 0;
+			bottom: 0;
+			left: 0;
 		}
 		header {
 			background-color: #f44336;
@@ -96,8 +97,9 @@
 			font-size: 1.5rem;
 			padding: 0 1.5rem;
 			position: fixed;
-			z-index: 2;
+			z-index: 1;
 			width: calc(100% - 48px);
+			overflow: hidden;
 		}
 		header #right {float: right;}
 		header #header-logout {
@@ -108,15 +110,17 @@
 		nav {
 			display: block;
 			position: fixed;
-			z-index: 300;
+			z-index: 3;
 			top: 0;
 			left: 0;
-			bottom: 0;
+			height: 100%;
 			background-color: #d32f2f;
 			max-width: 75%;
 			width: 15rem;
 			transform: translateX(-100%);
 			transition: transform 350ms ease-in-out;
+			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
 		}
 		nav a {
 			display: block;
@@ -155,7 +159,7 @@
 			left: 0;
 			bottom: 0;
 			right: 0;
-			z-index: 299;
+			z-index: 2;
 			transition: opacity 350ms ease-in-out;
 		}
 		#navOpen:checked ~ #navOverlay {
@@ -170,9 +174,10 @@
 			float: left;
 			border-right: 1px solid #000;
 			position: absolute;
-			top: 85px;
+			top: 37px;
 			height: 100%;
 			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
 		}
 		.message {
 			color: #000;
@@ -203,28 +208,28 @@
 		#message-view {
 			width: calc(60% - 2px);
 			position: absolute;
-			top: 48px;
 			right: 0;
 			height: calc(100% + 34px);
+			top: 0;
 			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
 		}
 		#search {
 			width: calc(40% - 2rem);
-			float: left;
 			border: 0;
 			border-bottom: 1px solid #000;
 			border-right: 1px solid #000;
+			border-radius: 0;
 			position: fixed;
-			top: 48px;
 			font-size: 1rem;
 			outline: none;
 			padding: .5rem 1rem;
-			/*margin-bottom: .1rem;*/
 		}
 		#slider {
 			width: 100%;
 			position: relative;
-			height: calc(100% - 83px);
+			height: calc(100% - 85px);
+			top: 48px;
 			transition: 200ms ease-in-out transform;
 		}
 		@media screen and (max-width: 800px) {
@@ -245,21 +250,44 @@
 			}
 			#slider {width: 200%;}
 		}
+		#loadingSpinner {
+			border: 16px solid #ccc;
+			border-top: 16px solid #f44336;
+			border-radius: 50%;
+			width: 120px;
+			height: 120px;
+			animation: spin 1s linear infinite;
+			position: relative;
+			left: calc(50% - 60px);
+			top: calc(50% - 60px);
+			line-height: 120px;
+			text-align: center;
+		}
+		#loadingSpinner:after {
+			content: 'Loading...';
+			display: block;
+			animation: backSpin 1s linear infinite reverse;
+		}
+		@keyframes spin {
+			0% {transform: rotate(0deg);}
+			100% {transform: rotate(360deg);}
+		}
+		@keyframes backSpin {
+			0% {transform: rotate(0deg);}
+			100% {transform: rotate(360deg);}
+		}
 	</style>
-
-	<script>
-		if (window.location.href.includes("http://") == true) { window.location.href = "https://iemb.000webhostapp.com/"; }
-	</script>
-	
 	<script>
 		function updateSearchResults() {
 				if (document.getElementById('search').value === '') {
 					document.getElementById('message-container').innerHTML = '';
 					parseMessages();
+					refreshView();
 				}
 				else {
 					document.getElementById('message-container').innerHTML = '';
 					searchMessages(document.getElementById('search').value.toLowerCase());
+					refreshView();
 				}
 		}
 
@@ -386,6 +414,13 @@
 			}
 		}
 		function getMessage() {
+			document.getElementById('message-view').innerHTML = '';
+			var spinner = document.createElement('div');
+			spinner.id = 'loadingSpinner';
+			// var text = document.createTextNode('Loading...');
+			// text.id = 'spinnerText';
+			// spinner.appendChild(text);
+			document.getElementById('message-view').appendChild(spinner);
 			document.getElementById(selectMessage.toString()).removeAttribute('style');
 			this.style.backgroundColor = '#ff8a80';
 			selectMessage = this.id;
@@ -406,7 +441,10 @@
 			if (window.innerWidth < 800) for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', transformSlider, false);
 			else for (i = 0; i < messages.length; i++) messages[i].removeEventListener('click', transformSlider, false);
 		}
-		function transformSlider() {document.getElementById('slider').style.transform = 'translateX(-50%)'};
+		function transformSlider() {
+			document.getElementById('slider').style.transform = 'translateX(-50%)';
+			document.getElementById('slider').style.height = 'calc(100% - 48px)';
+		}
 		function readAll() {
 			var event = document.createEvent('Events');
 			event.initEvent('click', true, false);
@@ -423,7 +461,7 @@
 
 <body>
 	<header>
-		<label for='navOpen'>&#x2630;</label> iEMB 2.0
+		<label for='navOpen'>&#x2630;</label> iEMB
 		<div id='right'>
 			<span id='header-name'>Welcome, <?php echo $username; ?></span>
 			<span id='header-read'>Read all</span>
