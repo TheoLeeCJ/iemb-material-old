@@ -389,9 +389,9 @@
 		}
 
 		.HotdogBun1, .HotdogSausage, .HotdogBun2 {
-			width: 35px;
-			height: 5px;
-			background-color: #333;
+			width: 20px;
+			height: 3px;
+			background-color: white;
 			margin: 6px 0;
 			transition: 0.4s;
 		}
@@ -402,9 +402,6 @@
 				rotate(-45deg)
 				translate(-15px, -6px)
 				scale(0.5, 1);
-			}
-
-			.change .HotdogSausage {
 			}
 
 			.change .HotdogBun2 {
@@ -579,9 +576,19 @@
 			else for (i = 0; i < messages.length; i++) messages[i].removeEventListener('click', transformSlider, false);
 		}
 		function transformSlider() {
+			var hotdog = document.getElementsByClassName('Hotdog')[0];
 			document.getElementById('slider').classList.toggle('transformed');
-			document.getElementsByClassName('Hotdog')[0].classList.toggle('change');
-			document.getElementsByClassName('Hotdog')[0].addEventListener("click", transformSlider);
+			hotdog.classList.toggle('change');
+
+			
+			if (hotdog.getAttribute('data-messageOpen') == 'true') {
+				hotdog.removeEventListener('click', transformSlider);
+				hotdog.getElementsByClassName('Hotdog')[0].setAttribute('data-messageOpen', 'false');
+			}
+			else {
+				hotdog.addEventListener('click', transformSlider);
+				hotdog.getElementsByClassName('Hotdog')[0].setAttribute('data-messageOpen', 'true');
+			}
 		}
 		function readAll() {
 			document.getElementById('message-view').innerHTML = 'Reading all messages...';
