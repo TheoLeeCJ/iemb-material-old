@@ -79,7 +79,15 @@
 <!DOCTYPE html>
 <html lang='en-SG'>
 <head>
-	<title>Student Board | iEMB 2.0</title>
+	<title>
+		<?php
+			if ($_GET['board'] == '1048') { echo 'Student Board | iEMB'; }
+			else if ($_GET['board'] == '1050') { echo 'Lost and Found | iEMB'; }
+			else if ($_GET['board'] == '1049') { echo 'PSB Board | iEMB'; }
+			else if ($_GET['board'] == '1039') { echo 'Service Board | iEMB'; }
+			else if ($_GET['board'] == '1053') { echo 'Let\'s Serve! | iEMB'; }
+		?>
+	</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 
 	<link rel='stylesheet' type='text/css' href='/styling.css'>
