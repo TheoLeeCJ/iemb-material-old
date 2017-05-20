@@ -436,10 +436,7 @@
 			selectMessage = this.id;
 			var request = new XMLHttpRequest();
 			request.onreadystatechange = function() {
-				if (this.readyState === 4 && this.status === 200) {
-					document.getElementById('message-view').innerHTML = this.responseText;
-					document.getElementById('readAllProgress').value += 1;
-				};
+				if (this.readyState === 4 && this.status === 200) document.getElementById('message-view').innerHTML = this.responseText;
 			};
 			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
 			request.send();
@@ -478,6 +475,7 @@
 				if (done == messagesUnread) {
 					document.getElementById('message-view').innerHTML = 'All messages read';
 					document.getElementsByTagName('header')[0].style.transform = 'translateY(-50%)';
+					clearInterval(checkDone);
 				}
 			}, 5000);
 		}
