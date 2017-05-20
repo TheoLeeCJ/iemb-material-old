@@ -187,6 +187,7 @@
 		}
 		#navOpen:checked ~ #navOverlay {
 			opacity: .5;
+			width: 100%;
 			pointer-events: auto;
 		}
 		#navOpen {display: none;}
