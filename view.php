@@ -2,8 +2,8 @@
 	session_start();
 	if (isset($_SESSION['logged_in'])) {
 		if (!isset($_SESSION['username']) || !isset($_SESSION['password'])) {
-			header('Location: index.php');
-			exit();
+			header('Location: index.php?again=true');
+			exit('An error has occured. Please log in again <a href=\'index.php\'>here</a>');
 		}
 	}
 	$username = $_SESSION['username'];
@@ -18,7 +18,7 @@
 	curl_exec($ch);
 	if (!isset($_GET['board'])) {
 		header('Location: view.php?board=1048');
-		exit();
+		exit('<a href=\'view.php?board=1048\'>Click here to reload</a>');
 	}
 	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/Board/Detail/' . $_GET['board']);
 	$content = curl_exec($ch);
@@ -90,7 +90,8 @@
 			bottom: 0;
 			left: 0;
 		}
-		header {
+		#headerContainer {
+			height: 3rem;
 			background-color: #f44336;
 			color: #fff;
 			line-height: 3rem;
@@ -101,11 +102,21 @@
 			width: calc(100% - 48px);
 			overflow: hidden;
 		}
+		header {
+			height: 6rem;
+			transform: translateY(-50%);
+			transition: transform 250ms ease-in-out;
+		}
 		header #right {float: right;}
 		header #header-logout {
 			color: #fff;
 			text-decoration: none;
 			margin-left: 1rem;
+		}
+		#readAllProgress {
+			height: 3rem;
+			display: block;
+			width: 100%;
 		}
 		nav {
 			display: block;
@@ -310,8 +321,10 @@
 						messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
 						
 						var messageHeading = document.createElement('div');
-						messageHeading.innerHTML = unread[messagesParsed].messageTitle.trim();
+						var messageHeadingBold = document.createElement('strong');
+						messageHeadingBold.innerHTML = unread[messagesParsed].messageTitle.trim();
 						messageHeading.className = 'message-header';
+						messageHeading.appendChild(messageHeadingBold);
 						messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
 
 						var messageAuthor = document.createElement('div');
@@ -327,7 +340,7 @@
 			messagesParsed = 0;
 
 			while (messagesParsed < read.length) {
-				if ((read[messagesParsed].messageDate.trim().includes(searchString) == true) || (read[messagesParsed].messageAuthor.trim().includes(searchString) == true) || (read[messagesParsed].messageTitle.trim().includes(searchString) == true)) {
+				if ((read[messagesParsed].messageDate.trim().toLowerCase().includes(searchString) == true) || (read[messagesParsed].messageAuthor.trim().toLowerCase().includes(searchString) == true) || (read[messagesParsed].messageTitle.trim().toLowerCase().includes(searchString) == true)) {
 					var messageRow = document.createElement('div');
 					messageRow.setAttribute('id', 'a' + read[messagesParsed].url.substr(31));
 					messageRow.className = 'message';
@@ -417,16 +430,16 @@
 			document.getElementById('message-view').innerHTML = '';
 			var spinner = document.createElement('div');
 			spinner.id = 'loadingSpinner';
-			// var text = document.createTextNode('Loading...');
-			// text.id = 'spinnerText';
-			// spinner.appendChild(text);
 			document.getElementById('message-view').appendChild(spinner);
 			document.getElementById(selectMessage.toString()).removeAttribute('style');
 			this.style.backgroundColor = '#ff8a80';
 			selectMessage = this.id;
 			var request = new XMLHttpRequest();
 			request.onreadystatechange = function() {
-				if (this.readyState === 4 && this.status === 200) document.getElementById('message-view').innerHTML = this.responseText;
+				if (this.readyState === 4 && this.status === 200) {
+					document.getElementById('message-view').innerHTML = this.responseText;
+					document.getElementById('readAllProgress').value += 1;
+				};
 			};
 			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
 			request.send();
@@ -446,9 +459,27 @@
 			document.getElementById('slider').style.height = 'calc(100% - 48px)';
 		}
 		function readAll() {
-			var event = document.createEvent('Events');
-			event.initEvent('click', true, false);
-			for (i = 0; i < messagesUnread; i++) messages[i].dispatchEvent(event);
+			document.getElementById('message-view').innerHTML = 'Reading all messages...';
+			document.getElementById('readAllProgress').max = messagesUnread;
+			document.getElementsByTagName('header')[0].style.transform = 'translateY(0)';
+			var done = 0;
+			for (i = 0; i < messagesUnread; i++) {
+				var request = new XMLHttpRequest();
+				request.onreadystatechange = function() {
+					if (this.readyState === 4 && this.status === 200) {
+						document.getElementById('readAllProgress').value += 1;
+						done += 1;
+					}
+				};
+				request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+document.getElementById('message-container').getElementsByTagName('div')[i].id.substr(1), true);
+				request.send();
+			}
+			var checkDone = setInterval(function() {
+				if (done == messagesUnread) {
+					document.getElementById('message-view').innerHTML = 'All messages read';
+					document.getElementsByTagName('header')[0].style.transform = 'translateY(-50%)';
+				}
+			}, 5000);
 		}
 		document.addEventListener('DOMContentLoaded', function() {
 			parseMessages();
@@ -460,14 +491,17 @@
 </head>
 
 <body>
-	<header>
-		<label for='navOpen'>&#x2630;</label> iEMB
-		<div id='right'>
-			<span id='header-name'>Welcome, <?php echo $username; ?></span>
-			<span id='header-read'>Read all</span>
-			<a href='logout.php' id='header-logout'>Log Out</a>
-		</div>
-	</header>
+	<div id='headerContainer'>
+		<header>
+			<progress id='readAllProgress' value='0' max='0'></progress>
+			<label for='navOpen'>&#x2630;</label> iEMB
+			<div id='right'>
+				<span id='header-name'>Welcome, <?php echo $username; ?></span>
+				<span id='header-read'>Read all</span>
+				<a href='logout.php' id='header-logout'>Log Out</a>
+			</div>
+		</header>
+	</div>
 	<input type='checkbox' id='navOpen'>
 	<nav>
 		<img src='logo.svg'>
