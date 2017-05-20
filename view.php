@@ -179,7 +179,7 @@
 		}
 		#navOpen {display: none;}
 		label {cursor: pointer;}
-		td {border-top: 1px solid #ccc;}
+		p {margin: 0;}
 		#message-container {
 			width: 40%;
 			float: left;
@@ -382,6 +382,38 @@
 			transform: translateX(-50%);
 			height: calc(100% - 48px);
 		}
+
+		.Hotdog {
+			display: inline-block;
+			cursor: pointer;
+		}
+
+		.HotdogBun1, .HotdogSausage, .HotdogBun2 {
+			width: 35px;
+			height: 5px;
+			background-color: #333;
+			margin: 6px 0;
+			transition: 0.4s;
+		}
+
+		@media screen and (max-width: 800px) {
+			.change .HotdogBun1 {
+				transform:
+				rotate(-45deg)
+				translate(-15px, -6px)
+				scale(0.5, 1);
+			}
+
+			.change .HotdogSausage {
+			}
+
+			.change .HotdogBun2 {
+				transform:
+				rotate(45deg)
+				translate(-15px, 6px)
+				scale(0.5, 1);
+			}
+		}
 	</style>
 	<script>
 		function updateSearchResults() {
@@ -548,6 +580,8 @@
 		}
 		function transformSlider() {
 			document.getElementById('slider').classList.toggle('transformed');
+			document.getElementsByClassName('Hotdog')[0].classList.toggle('change');
+			document.getElementsByClassName('Hotdog')[0].addEventListener("click", transformSlider);
 		}
 		function readAll() {
 			document.getElementById('message-view').innerHTML = 'Reading all messages...';
@@ -586,7 +620,13 @@
 	<div id='headerContainer'>
 		<header>
 			<progress id='readAllProgress' value='0' max='0'></progress>
-			<label for='navOpen'>&#x2630;</label> iEMB
+			<label for='navOpen'>
+				<div class='Hotdog'>
+					<div class='HotdogBun1'></div>
+					<div class='HotdogSausage'></div>
+					<div class='HotdogBun2'></div>
+				</div>
+			</label> iEMB
 			<div id='right'>
 				<span id='header-name'>Welcome, <?php echo $username; ?></span>
 				<span id='header-read'>Read all</span>
