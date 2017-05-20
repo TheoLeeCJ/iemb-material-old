@@ -24,7 +24,7 @@
 	$content = curl_exec($ch);
 	curl_close($ch);
 	$dom = new DOMDocument();
-	@$dom->loadHTML($content);
+	@$dom->loadHTML('<!DOCTYPE html>' . $content);
 	$a = 0; $unreadMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
 		if ($key < 1) continue;
@@ -654,7 +654,7 @@
 	</div>
 	<input type='checkbox' id='navOpen'>
 	<nav>
-		<img src='logo.svg'>
+		<img src='logo.svg' id='Hwa Chong Logo'>
 		<a href='view.php?board=1048'>Student</a>
 		<a href='view.php?board=1050'>Lost &amp; Found</a>
 		<a href='view.php?board=1049'>PSB</a>

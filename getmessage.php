@@ -21,7 +21,7 @@
 	$content = curl_exec($ch);
 	curl_close($ch);
 	$dom = new DOMDocument();
-	@$dom->loadHTML($content);
+	@$dom->loadHTML('<!DOCTYPE html>' . $content);
 	$finder = new DOMXpath($dom);
 	$spaner = $finder->query('//*[contains(@class, \'read_message_body_div\')]');
 	echo '<div id=\'view-header\'><strong>' . substr($spaner->item(0)->getElementsByTagName('div')->item(5)->textContent, 7) . '</strong><br>';
