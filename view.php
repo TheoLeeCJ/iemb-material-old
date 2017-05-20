@@ -378,6 +378,10 @@
 			cursor: pointer;
 			box-shadow: rgba(0, 0, 0, 0.137255) 0px 2px 2px 0px, rgba(0, 0, 0, 0.117647) 0px 3px 1px -2px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
 		}
+		.transformed {
+			transform: translateX(-50%);
+			height: calc(100% - 48px);
+		}
 	</style>
 	<script>
 		function updateSearchResults() {
@@ -543,8 +547,7 @@
 			else for (i = 0; i < messages.length; i++) messages[i].removeEventListener('click', transformSlider, false);
 		}
 		function transformSlider() {
-			document.getElementById('slider').style.transform = 'translateX(-50%)';
-			document.getElementById('slider').style.height = 'calc(100% - 48px)';
+			document.getElementById('slider').classList.toggle('transformed');
 		}
 		function readAll() {
 			document.getElementById('message-view').innerHTML = 'Reading all messages...';
