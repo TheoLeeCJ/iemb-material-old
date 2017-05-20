@@ -168,7 +168,7 @@
 			?>
 		</form>
 
-		<div id="SkinSelect">
+		<!--<div id="SkinSelect">
 			Appearance: 
 			<select id="SkinSelect-Box" style="box-shadow: none;">
 				<option selected>iEMB 2.0</option>
@@ -176,7 +176,7 @@
 				<option>Human</option>
 				<option>Material</option>
 			</select>
-		</div>
+		</div>-->
 	</div>
 	<div id='margin-bottom'>
 	</div>
