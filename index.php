@@ -106,23 +106,8 @@
 			.text {width: 100%;}
 			.text-after {width: calc(100% + 6px);}
 		}
-		#gradient {
-			  /*background: linear-gradient(to right, #ff512f, #dd2476);*/
-			  animation: gradientmove 2s infinite linear alternate;
-			  height: 4px;
-			  margin-bottom: calc(3rem - 4px);
-			  margin-left: -3rem;
-			  width: calc(200% + 12rem);
-		}
-		@keyframes gradientmove {
-			0% {transform: translateX(0);}
-			100% {transform: translateX(-50%);}
-		}
+		#gradient {height: 2rem;}
 	</style>
-
-	<script>
-		if (window.location.href.includes("http://") == true) { window.location.href = "https://iemb.000webhostapp.com/"; }
-	</script>
 </head>
 <body>
 	<div id='background-container'><img src='background.svg' id='background'></div>

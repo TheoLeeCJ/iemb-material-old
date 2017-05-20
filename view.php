@@ -158,7 +158,7 @@
 			width: calc(100% - 4rem);
 			display: block;
 			padding: 2rem;
-			background: linear-gradient(to bottom, #FFEBEE 30%, #FFCDD2 50%, #d32f2f);
+			background-image: linear-gradient(to bottom, #ffebee 30%, #ffcdd2 50%, #d32f2f);
 		}
 		#navOpen:checked ~ nav {transform: translateX(0);}
 		#navOverlay {
@@ -286,6 +286,97 @@
 		@keyframes backSpin {
 			0% {transform: rotate(0deg);}
 			100% {transform: rotate(360deg);}
+		}
+		label {
+			cursor: pointer;
+			margin-right: 8px;
+		}
+		.radioStyle {
+			height: 12px;
+			width: 12px;
+			margin-bottom: -2px;
+			border-radius: 50%;
+			display: inline-block;
+			border: 2px solid #000;
+			position: relative;
+			z-index: 1;
+		}
+		.radio:checked + label .radioStyle:before {transform: scale(4, 4);}
+		.radio:checked + label .radioStyle {border-color: #9a0007;}
+		.radio:checked + label .radioStyle:after {
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			content: ' ';
+			background-color: #9a0007;
+			opacity: .5;
+			height: 16px;
+			width: 16px;
+			transform: scale(0, 0);
+			position: absolute;
+			left: -2px;
+			top: -2px;
+			border-radius: 50%;
+			animation: selectRipple 200ms;
+			z-index: 1;
+		}
+		.radioStyle:before {
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			content: '';
+			background-color: #9a0007;
+			height: 2px;
+			width: 2px;
+			transform: scale(0, 0);
+			position: absolute;
+			left: 5px;
+			top: 5px;
+			border-radius: 1px;
+			transition: transform 200ms ease-in-out;
+			z-index: -1;
+		}
+		.radio {display: none;}
+		@keyframes selectRipple {
+			0% {transform: scale(0, 0) translateZ(0);}
+			75% {transform: scale(1.5, 1.5) translateZ(0);}
+			100% {transform: scale(0, 0) translateZ(0);}
+		}
+		.text {
+			border-radius: 0;
+			font-size: 1rem;
+			display: block;
+			width: 100%;
+			max-width: 100%;
+			height: 4.5rem;
+			margin: .25rem auto;
+			padding: .2rem;
+			border: 1px solid #eee;
+			border-bottom: 2px solid #ccc;
+			outline: none;
+		}
+		.text-after {
+			display: block;
+			width: calc(100% + 7px);
+			height: 2px;
+			margin: auto;
+			margin-top: calc(-2px - .25rem);
+			transition: transform ease-in-out 200ms;
+			transform: scaleX(0);
+			background-color: #9a0007;
+		}
+		.text:focus + .text-after {transform: scaleX(1);}
+		#button {
+			background-color: #9a0007;
+			color: #fff;
+			margin-top: 1.5rem;
+			text-transform: uppercase;
+			padding: .75rem;
+			display: block;
+			border: none;
+			float: right;
+			font-size: 1rem;
+			border-radius: 3px;
+			cursor: pointer;
+			box-shadow: rgba(0, 0, 0, 0.137255) 0px 2px 2px 0px, rgba(0, 0, 0, 0.117647) 0px 3px 1px -2px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
 		}
 	</style>
 	<script>
