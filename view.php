@@ -290,6 +290,8 @@
 		label {
 			cursor: pointer;
 			margin-right: 8px;
+			position: relative;
+			top: 6px;
 		}
 		.radioStyle {
 			height: 12px;
@@ -397,6 +399,10 @@
 		}
 
 		@media screen and (max-width: 800px) {
+			label {
+				left: -20px;
+			}
+
 			.change .HotdogBun1 {
 				transform:
 				rotate(-45deg)
@@ -405,7 +411,7 @@
 			}
 
 			.change .HotdogSausage {
-				transform: translate(-3px, 0px);
+				transform: translate(-9px, 0px);
 			}
 
 			.change .HotdogBun2 {
@@ -584,13 +590,15 @@
 			document.getElementById('slider').classList.toggle('transformed');
 			hotdog.classList.toggle('change');
 
-			if (hotdog.getAttribute('data-messageOpen') == 'true') {
+			if (hotdog.getAttribute('data-messageopen') == 'true') {
 				hotdog.removeEventListener('click', transformSlider);
-				hotdog.setAttribute('data-messageOpen', 'false');
+				hotdog.setAttribute('data-messageopen', 'false');
+				setTimeout(function() { document.getElementById("MenuContainer").setAttribute("for", "navOpen"); }, 1000);
 			}
 			else {
 				hotdog.addEventListener('click', transformSlider);
-				hotdog.setAttribute('data-messageOpen', 'true');
+				hotdog.setAttribute('data-messageopen', 'true');
+				document.getElementById("MenuContainer").removeAttribute("for");
 			}
 		}
 		function readAll() {
@@ -630,7 +638,7 @@
 	<div id='headerContainer'>
 		<header>
 			<progress id='readAllProgress' value='0' max='0'></progress>
-			<label for='navOpen'>
+			<label id="MenuContainer" for='navOpen'>
 				<div class='Hotdog'>
 					<div class='HotdogBun1'></div>
 					<div class='HotdogSausage'></div>
