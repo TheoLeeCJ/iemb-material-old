@@ -107,6 +107,20 @@
 			.text-after {width: calc(100% + 6px);}
 		}
 		#gradient {height: 2rem;}
+
+		#SkinSelect, #SkinSelect-Box {
+			z-index: 10;
+			background-color: white;
+			cursor: pointer;
+			border: 0;
+			padding: 7.5px; padding-left: 20px; padding-right: 20px;
+			box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .12), 0 1px 5px 0 rgba(0, 0, 0, .2);
+		}
+
+		#SkinSelect {
+			margin-top: 20px;
+			cursor: default;
+		}
 	</style>
 </head>
 <body>
@@ -153,6 +167,16 @@
 				}
 			?>
 		</form>
+
+		<div id="SkinSelect">
+			Appearance: 
+			<select id="SkinSelect-Box" style="box-shadow: none;">
+				<option selected>iEMB 2.0</option>
+				<option>iEMB</option>
+				<option>Human</option>
+				<option>Material</option>
+			</select>
+		</div>
 	</div>
 	<div id='margin-bottom'>
 	</div>
