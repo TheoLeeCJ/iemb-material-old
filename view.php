@@ -20,11 +20,15 @@
 		header('Location: view.php?board=1048');
 		exit('<a href=\'view.php?board=1048\'>Click here to reload</a>');
 	}
-	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/Board/Detail/' . $_GET['board']);
+	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/Board/Detail/' . $_GET['board']); //Gets actual data from iEMB board
 	$content = curl_exec($ch);
 	curl_close($ch);
 	$dom = new DOMDocument();
+
+	//Lets PHP work
 	@$dom->loadHTML('<!DOCTYPE html>' . $content);
+
+	//Parses messages into JSON
 	$a = 0; $unreadMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
 		if ($key < 1) continue;
@@ -46,6 +50,8 @@
 
 		$messagesParsed++; //Also can be used to show number of messages
 	}
+
+	//Parses messages into JSON
 	$a = 0; $readMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table1')->getElementsByTagName('tr') as $key=>$row) {
 		if ($key < 1) continue;
@@ -76,20 +82,15 @@
 	<title>Student Board | iEMB 2.0</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 
+	<link rel='stylesheet' type='text/css' href='/styling.css'>
+
 	<style>
-		html {
-			font: 1em/1.5rem -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
-			overflow: hidden;
-		}
 		body {
-			margin: 0;
 			cursor: default;
 			position: absolute;
-			top: 0;
-			right: 0;
-			bottom: 0;
-			left: 0;
+			top: 0; right: 0;	bottom: 0; left: 0;
 		}
+
 		#headerContainer {
 			height: 3rem;
 			background-color: #f44336;
@@ -113,11 +114,14 @@
 			text-decoration: none;
 			margin-left: 1rem;
 		}
+
 		#readAllProgress {
 			height: 3rem;
 			display: block;
 			width: 100%;
 		}
+
+		/*Side menu*/
 		nav {
 			display: block;
 			position: fixed;
@@ -180,6 +184,7 @@
 		#navOpen {display: none;}
 		label {cursor: pointer;}
 		p {margin: 0;}
+		
 		#message-container {
 			width: 40%;
 			float: left;
@@ -190,6 +195,7 @@
 			overflow-y: scroll;
 			-webkit-overflow-scrolling: touch;
 		}
+
 		.message {
 			color: #000;
 			text-decoration: none;
@@ -201,21 +207,26 @@
 			padding-left: .5rem; padding-right: .5rem;
 			cursor: pointer;
 		}
+		
 		.message-header, .message-date, .message-username {
 			text-overflow: ellipsis;
 			overflow: hidden;
 			white-space: nowrap;
 		}
+
 		.message-header {font-size: 1.2rem;}
 		.message-date {float: right;}
 		.message-username {clear: right;}
+
 		#view-header {
 			margin: 1rem;
 			margin-bottom: .5rem;
 			padding-bottom: .25rem;
 			border-bottom: 1px solid #000;
 		}
+
 		#view-body {padding: 0 calc(1rem - 5px);}
+
 		#message-view {
 			width: calc(60% - 2px);
 			position: absolute;
@@ -225,6 +236,7 @@
 			overflow-y: scroll;
 			-webkit-overflow-scrolling: touch;
 		}
+
 		#search {
 			width: calc(40% - 2rem);
 			border: 0;
@@ -236,6 +248,7 @@
 			outline: none;
 			padding: .5rem 1rem;
 		}
+
 		#slider {
 			width: 100%;
 			position: relative;
@@ -243,24 +256,31 @@
 			top: 48px;
 			transition: 200ms ease-in-out transform;
 		}
+
 		@media screen and (max-width: 800px) {
 			#header-name {display: none;}
+
 			header {
 				padding: 0 .75rem;
 				width: calc(100% - 1.5rem);
 			}
+
 			#search {
 				width: calc(50% - 2rem);
 				position: relative;
 				border-right: none;
 			}
+
 			#message-container, #message-view {
 				border: none;
 				width: 50%;
 				height: 100%;
 			}
+
 			#slider {width: 200%;}
 		}
+
+		/*Loading spinner - displays when client waits for server to get a message*/
 		#loadingSpinner {
 			border: 16px solid #ccc;
 			border-top: 16px solid #f44336;
@@ -287,12 +307,15 @@
 			0% {transform: rotate(0deg);}
 			100% {transform: rotate(360deg);}
 		}
+
 		label {
 			cursor: pointer;
 			margin-right: 8px;
 			position: relative;
 			top: 6px;
 		}
+
+		/*Defines radio button styles for response*/
 		.radioStyle {
 			height: 12px;
 			width: 12px;
@@ -303,8 +326,10 @@
 			position: relative;
 			z-index: 1;
 		}
+
 		.radio:checked + label .radioStyle:before {transform: scale(4, 4);}
 		.radio:checked + label .radioStyle {border-color: #9a0007;}
+
 		.radio:checked + label .radioStyle:after {
 			-webkit-backface-visibility: hidden;
 			backface-visibility: hidden;
@@ -321,6 +346,7 @@
 			animation: selectRipple 200ms;
 			z-index: 1;
 		}
+
 		.radioStyle:before {
 			-webkit-backface-visibility: hidden;
 			backface-visibility: hidden;
@@ -336,55 +362,21 @@
 			transition: transform 200ms ease-in-out;
 			z-index: -1;
 		}
+
 		.radio {display: none;}
+
 		@keyframes selectRipple {
 			0% {transform: scale(0, 0) translateZ(0);}
 			75% {transform: scale(1.5, 1.5) translateZ(0);}
 			100% {transform: scale(0, 0) translateZ(0);}
 		}
-		.text {
-			border-radius: 0;
-			font-size: 1rem;
-			display: block;
-			width: 100%;
-			max-width: 100%;
-			height: 4.5rem;
-			margin: .25rem auto;
-			padding: .2rem;
-			border: 1px solid #eee;
-			border-bottom: 2px solid #ccc;
-			outline: none;
-		}
-		.text-after {
-			display: block;
-			width: calc(100% + 7px);
-			height: 2px;
-			margin: auto;
-			margin-top: calc(-2px - .25rem);
-			transition: transform ease-in-out 200ms;
-			transform: scaleX(0);
-			background-color: #9a0007;
-		}
-		.text:focus + .text-after {transform: scaleX(1);}
-		#button {
-			background-color: #9a0007;
-			color: #fff;
-			margin-top: 1.5rem;
-			text-transform: uppercase;
-			padding: .75rem;
-			display: block;
-			border: none;
-			float: right;
-			font-size: 1rem;
-			border-radius: 3px;
-			cursor: pointer;
-			box-shadow: rgba(0, 0, 0, 0.137255) 0px 2px 2px 0px, rgba(0, 0, 0, 0.117647) 0px 3px 1px -2px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
-		}
+
 		.transformed {
 			transform: translateX(-50%);
 			height: calc(100% - 48px);
 		}
 
+		/*Top menu icon - morphs on mobile*/
 		.Hotdog {
 			display: inline-block;
 			cursor: pointer;
@@ -423,19 +415,21 @@
 		}
 	</style>
 	<script>
+		//Updates search results based on user's search
 		function updateSearchResults() {
-				if (document.getElementById('search').value === '') {
-					document.getElementById('message-container').innerHTML = '';
-					parseMessages();
-					refreshView();
-				}
-				else {
-					document.getElementById('message-container').innerHTML = '';
-					searchMessages(document.getElementById('search').value.toLowerCase());
-					refreshView();
-				}
+			if (document.getElementById('search').value === '') {
+				document.getElementById('message-container').innerHTML = '';
+				parseMessages();
+				refreshView();
+			}
+			else {
+				document.getElementById('message-container').innerHTML = '';
+				searchMessages(document.getElementById('search').value.toLowerCase());
+				refreshView();
+			}
 		}
 
+		//Searches through messages and outputs results to message container
 		function searchMessages(searchString) {
 			var resultsTable = document.getElementById('message-container'); //CHANGE TO ID OF TABLE FOR SEARCH RESULTS
 			var unread = JSON.parse(document.getElementById('unreadMessagesJSON').innerHTML);
@@ -445,28 +439,28 @@
 
 			while (messagesParsed < unread.length) {
 				if ((unread[messagesParsed].messageDate.trim().toLowerCase().includes(searchString) == true) || (unread[messagesParsed].messageAuthor.trim().toLowerCase().includes(searchString) == true) || (unread[messagesParsed].messageTitle.trim().toLowerCase().includes(searchString) == true)) {
-						var messageRow = document.createElement('div');
-						messageRow.setAttribute('id', 'a' + unread[messagesParsed].url.substr(31));
-						messageRow.className = 'message';
+					var messageRow = document.createElement('div');
+					messageRow.setAttribute('id', 'a' + unread[messagesParsed].url.substr(31));
+					messageRow.className = 'message';
 
-						var messageDate = document.createElement('div');
-						messageDate.innerHTML = unread[messagesParsed].messageDate.trim();
-						messageDate.className = 'message-date';
-						messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
-						
-						var messageHeading = document.createElement('div');
-						var messageHeadingBold = document.createElement('strong');
-						messageHeadingBold.innerHTML = unread[messagesParsed].messageTitle.trim();
-						messageHeading.className = 'message-header';
-						messageHeading.appendChild(messageHeadingBold);
-						messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
+					var messageDate = document.createElement('div');
+					messageDate.innerHTML = unread[messagesParsed].messageDate.trim();
+					messageDate.className = 'message-date';
+					messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
+					
+					var messageHeading = document.createElement('div');
+					var messageHeadingBold = document.createElement('strong');
+					messageHeadingBold.innerHTML = unread[messagesParsed].messageTitle.trim();
+					messageHeading.className = 'message-header';
+					messageHeading.appendChild(messageHeadingBold);
+					messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
 
-						var messageAuthor = document.createElement('div');
-						messageAuthor.innerHTML = unread[messagesParsed].messageAuthor.trim();
-						messageAuthor.className = 'message-username';
-						messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
+					var messageAuthor = document.createElement('div');
+					messageAuthor.innerHTML = unread[messagesParsed].messageAuthor.trim();
+					messageAuthor.className = 'message-username';
+					messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
 
-						resultsTable.innerHTML = resultsTable.innerHTML + messageRow.outerHTML;
+					resultsTable.innerHTML = resultsTable.innerHTML + messageRow.outerHTML;
 				}
 				messagesParsed++;
 			}
@@ -500,6 +494,7 @@
 			}
 		}
 
+		//Parses and displays messages using JavaScript - do more things client side
 		function parseMessages() {
 			var outputDiv = document.getElementById('message-container');
 
@@ -560,6 +555,8 @@
 			messagesParsed++;
 			}
 		}
+
+		//Retrievs message content from server and displays
 		function getMessage() {
 			document.getElementById('message-view').innerHTML = '';
 			var spinner = document.createElement('div');
@@ -575,16 +572,22 @@
 			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
 			request.send();
 		}
+
+		//Adds click handlers to messages
 		function refreshView() {
 			messages = document.getElementsByClassName('message');
 			selectMessage = messages[0].id;
 			for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', getMessage, false);
 			mobileRefresh();
 		}
+
+		//Change look of screen on mobile...
 		function mobileRefresh() {
 			if (window.innerWidth < 800) for (i = 0; i < messages.length; i++) messages[i].addEventListener('click', transformSlider, false);
 			else for (i = 0; i < messages.length; i++) messages[i].removeEventListener('click', transformSlider, false);
 		}
+
+		//Responsible for menu icon and sliding behaviour on mobile/small screens/hugely zoomed in displays
 		function transformSlider() {
 			var hotdog = document.getElementsByClassName('Hotdog')[0];
 			document.getElementById('slider').classList.toggle('transformed');
@@ -601,6 +604,8 @@
 				document.getElementById("MenuContainer").removeAttribute("for");
 			}
 		}
+
+		//Reads all messages :D
 		function readAll() {
 			document.getElementById('message-view').innerHTML = 'Reading all messages...';
 			document.getElementById('readAllProgress').max = messagesUnread;
@@ -635,6 +640,7 @@
 </head>
 
 <body>
+	<!--Header bar - menu icon, function buttons, logout-->
 	<div id='headerContainer'>
 		<header>
 			<progress id='readAllProgress' value='0' max='0'></progress>
@@ -652,6 +658,8 @@
 			</div>
 		</header>
 	</div>
+
+	<!--Side menu-->
 	<input type='checkbox' id='navOpen'>
 	<nav>
 		<img src='logo.svg' id='Hwa Chong Logo'>
@@ -670,6 +678,8 @@
 		<div id='message-container'></div>
 		<div id='message-view'></div>
 	</div>
+
+	<!--DIVs for JavaScript to get content from-->
 	<?php
 		echo '<div id=\'unreadMessagesJSON\' style=\'display: none;\'>' . json_encode($unreadMessagesAsObject) . '</div>';
 		echo '<div id=\'readMessagesJSON\' style=\'display: none;\'>' . json_encode($readMessagesAsObject) . '</div>';

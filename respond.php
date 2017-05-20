@@ -1,4 +1,8 @@
 <?php
+	/*
+	  This file is responsible for submitting responses to iEMB servers using POST as actual iEMB uses a mere form for this.
+	*/
+
 	if (!isset($_POST['boardid']) || !isset($_POST['topic']) || !isset($_POST['replyto'])) {
 		$board = isset($_POST['boardid']) ? $_POST['boardid'] : '1048';
 		header('Location: view.php?board=' . $board);

@@ -1,4 +1,8 @@
 <?php
+	/*
+	  This file is responsible for retrieiving messages from the actual iEMB and sending the response to view.php when user wants to view a message.
+	*/
+
 	session_start();
 	if (isset($_SESSION['logged_in'])) {
 		if (!isset($_SESSION['username']) || !isset($_SESSION['password'])) {
