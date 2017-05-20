@@ -13,6 +13,28 @@
 			min-height: 20px;
 		}
 
+		.text {
+			border-radius: 0;
+			font-size: 1rem;
+			display: block;
+			width: 22.5rem; max-width: 100%; height: 1.75rem;
+			margin: .25rem auto;
+			padding: .2rem;
+			border: none; border-bottom: 2px solid #ccc;
+			outline: none;
+		}
+		
+		.text-after {
+			display: block;
+			width: 22.9rem; height: 2px;
+			margin: auto; margin-top: calc(-2px - .25rem);
+			transition: transform ease-in-out 200ms;
+			transform: scaleX(0);
+			background-color: #9a0007;
+		}
+
+		.text:focus + .text-after { transform: scaleX(1); }
+
 		#form-container {
 			overflow-x: hidden;
 			width: 22.9rem;

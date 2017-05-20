@@ -22,25 +22,3 @@ body {
   cursor: pointer;
   box-shadow: rgba(0, 0, 0, 0.137255) 0px 2px 2px 0px, rgba(0, 0, 0, 0.117647) 0px 3px 1px -2px, rgba(0, 0, 0, 0.2) 0px 1px 5px 0px;
 }
-
-.text {
-  border-radius: 0;
-  font-size: 1rem;
-  display: block;
-  width: 22.5rem; max-width: 100%; height: 1.75rem;
-  margin: .25rem auto;
-  padding: .2rem;
-  border: none; border-bottom: 2px solid #ccc;
-  outline: none;
-}
-
-.text-after {
-  display: block;
-  width: 22.9rem; height: 2px;
-  margin: auto; margin-top: calc(-2px - .25rem);
-  transition: transform ease-in-out 200ms;
-  transform: scaleX(0);
-  background-color: #9a0007;
-}
-
-.text:focus + .text-after { transform: scaleX(1); }

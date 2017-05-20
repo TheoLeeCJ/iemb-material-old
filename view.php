@@ -98,6 +98,33 @@
 			position: absolute;
 			top: 0; right: 0;	bottom: 0; left: 0;
 		}
+		
+		.text {
+			border-radius: 0;
+			font-size: 1rem;
+			display: block;
+			width: 100%;
+			max-width: 100%;
+			height: 4.5rem;
+			margin: .25rem auto;
+			padding: .2rem;
+			border: 1px solid #eee;
+			border-bottom: 2px solid #ccc;
+			outline: none;
+		}
+
+		.text-after {
+			display: block;
+			width: calc(100% + 7px);
+			height: 2px;
+			margin: auto;
+			margin-top: calc(-2px - .25rem);
+			transition: transform ease-in-out 200ms;
+			transform: scaleX(0);
+			background-color: #9a0007;
+		}
+		
+		.text:focus + .text-after {transform: scaleX(1);}
 
 		#headerContainer {
 			height: 3rem;

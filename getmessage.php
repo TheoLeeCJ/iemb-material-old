@@ -28,10 +28,10 @@
 	@$dom->loadHTML('<!DOCTYPE html>' . $content);
 	$finder = new DOMXpath($dom);
 	$spaner = $finder->query('//*[contains(@class, \'read_message_body_div\')]');
-	echo '<div id=\'view-header\'><strong>' . substr($spaner->item(0)->getElementsByTagName('div')->item(5)->textContent, 7) . '</strong><br>';
-	echo substr($spaner->item(0)->getElementsByTagName('div')->item(6)->textContent, 7) . '<br>';
-	echo substr($spaner->item(0)->getElementsByTagName('div')->item(8)->textContent, 7) . '<br></div>';
-	if ($imgs = $spaner->item(0)->getElementsByTagName('div')->item(13)->getElementsByTagName('img')) {
+	echo '<div id=\'view-header\'><strong>' . substr($spaner->item(0)->getElementsByTagName('div')->item(6)->textContent, 7) . '</strong><br>';
+	echo substr($spaner->item(0)->getElementsByTagName('div')->item(7)->textContent, 7) . '<br>';
+	echo substr($spaner->item(0)->getElementsByTagName('div')->item(9)->textContent, 7) . '<br></div>';
+	if ($imgs = $spaner->item(0)->getElementsByTagName('div')->item(14)->getElementsByTagName('img')) {
 		foreach ($imgs as $img) {
 			if (substr($img->getAttribute('src'), 0, 11) != 'data:image/') {
 				$file = substr($img->getAttribute('src'), 0, 3) != 'http' ? file_get_contents('https://iemb.hci.edu.sg/Board/content/' . $img->getAttribute('src')) : file_get_contents($img->getAttribute('src'));
@@ -42,7 +42,7 @@
 			}
 		}
 	}
-	$text = $dom->saveXML($spaner->item(0)->getElementsByTagName('div')->item(13));
+	$text = $dom->saveXML($spaner->item(0)->getElementsByTagName('div')->item(14));
 	echo '<div id=\'view-body\'>';
 	echo $text;
 	if ($original = $dom->getElementById('replyForm')) {
@@ -119,6 +119,12 @@
 		$input->setAttribute('value', 'Cancel');
 		$formElem->appendChild($input);
 		echo $form->saveXML();
+	}
+
+	if ($original = $dom->getElementById('attaches')) {
+		echo "<hr>";
+		echo "<h3>Attachments</h3>";
+		echo "";
 	}
 	echo '</div>';
 ?>
