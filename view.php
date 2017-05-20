@@ -404,6 +404,10 @@
 				scale(0.5, 1);
 			}
 
+			.change .HotdogSausage {
+				transform: translate(-3px, 0px);
+			}
+
 			.change .HotdogBun2 {
 				transform:
 				rotate(45deg)
@@ -580,14 +584,13 @@
 			document.getElementById('slider').classList.toggle('transformed');
 			hotdog.classList.toggle('change');
 
-			
 			if (hotdog.getAttribute('data-messageOpen') == 'true') {
 				hotdog.removeEventListener('click', transformSlider);
-				hotdog.getElementsByClassName('Hotdog')[0].setAttribute('data-messageOpen', 'false');
+				hotdog.setAttribute('data-messageOpen', 'false');
 			}
 			else {
 				hotdog.addEventListener('click', transformSlider);
-				hotdog.getElementsByClassName('Hotdog')[0].setAttribute('data-messageOpen', 'true');
+				hotdog.setAttribute('data-messageOpen', 'true');
 			}
 		}
 		function readAll() {
