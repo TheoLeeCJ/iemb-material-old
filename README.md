@@ -10,3 +10,7 @@ It will feature changes which include
 * Improved productivity
 
 This project will **not** propogate to teachers' boards.
+
+## CODE REVIEW STAGE
+Report issues in the Issues tab in the following syntax: ISSUE: *title*
+Suggest features in the Issues tab in the following syntax: FEATURE REQUEST: *title*
