@@ -664,7 +664,7 @@
 				document.getElementById(selectMessage).nextSibling.click();
 				scrollKey();
 			}
-			if ((event.keyCode  == 49 ||
+			if (event.keyCode  == 49 ||
 				 event.keyCode == 50 ||
 				 event.keyCode == 51 ||
 				 event.keyCode == 52 ||
@@ -710,8 +710,7 @@
 				 event.keyCode == 222 ||
 				 event.keyCode == 188 ||
 				 event.keyCode == 190 ||
-				 event.keyCode == 191)
-				&& ) document.getElementById('search').focus();
+				 event.keyCode == 191) document.getElementById('search').focus();
 		}
 		function scrollKey() {
 			var rect = document.getElementById(selectMessage).getBoundingClientRect();
