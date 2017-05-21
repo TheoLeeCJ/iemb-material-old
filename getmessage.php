@@ -123,8 +123,8 @@
 
 	if ($original = $dom->getElementById('attaches')) {
 		echo '<hr>';
-		echo '<b>Attachments</b>';
-		echo 'Working on it!';
+		echo '<b>Attachments</b><br>';
+		echo 'Attachments can\'t be displayed as of now... We apologise for any inconvenience caused.';
 	}
 	echo '</div>';
 ?>

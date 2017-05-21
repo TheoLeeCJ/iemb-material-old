@@ -99,6 +99,7 @@
 			cursor: default;
 			position: absolute;
 			top: 0; right: 0;	bottom: 0; left: 0;
+			overflow: hidden;
 		}
 		
 		.text {
@@ -350,6 +351,15 @@
 			top: 6px;
 		}
 
+		/*Defines styling for attachments*/
+		.Attachment {
+			padding: 7.5px;
+			cursor: pointer;
+		}
+		.Attachment:hover {
+			background-color: #d1d1d1;
+		}
+
 		/*Defines radio button styles for response*/
 		.radioStyle {
 			height: 12px;
@@ -433,18 +443,18 @@
 			.change .HotdogBun1 {
 				transform:
 				rotate(-45deg)
-				translate(-15px, -6px)
+				translate(-7px, 0px)
 				scale(0.5, 1);
 			}
 
 			.change .HotdogSausage {
-				transform: translate(-9px, 0px);
+				transform: translate(0px, 0px);
 			}
 
 			.change .HotdogBun2 {
 				transform:
 				rotate(45deg)
-				translate(-15px, 6px)
+				translate(-7px, 0px)
 				scale(0.5, 1);
 			}
 		}
@@ -631,7 +641,7 @@
 			if (hotdog.getAttribute('data-messageopen') == 'true') {
 				hotdog.removeEventListener('click', transformSlider);
 				hotdog.setAttribute('data-messageopen', 'false');
-				setTimeout(function() { document.getElementById("MenuContainer").setAttribute("for", "navOpen"); }, 1000);
+				setTimeout(function() { document.getElementById("MenuContainer").setAttribute("for", "navOpen"); }, 20);
 			}
 			else {
 				hotdog.addEventListener('click', transformSlider);
