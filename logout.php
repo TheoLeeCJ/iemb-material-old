@@ -1,5 +1,6 @@
 <?php
 	session_start();
+	unlink('cookies/cookie_' . hash('sha512', $_SESSION['username']) . '.txt');
 	unset($_SESSION['username']);
 	unset($_SESSION['password']);
 	unset($_SESSION['logged_in']);
