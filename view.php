@@ -1,5 +1,6 @@
 <?php
-	session_start();
+	require 'credentials.php';
+	// session_start();
 	if (isset($_SESSION['logged_in'])) {
 		if (!isset($_SESSION['username']) || !isset($_SESSION['password'])) {
 			header('Location: index.php?again=true');
@@ -13,8 +14,9 @@
 	curl_setopt($ch, CURLOPT_POST, 1);
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'username=' . $username . '&password=' . $password);
 	curl_setopt($ch, CURLOPT_POSTREDIR, 2);
+	// Log into iEMB
 	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/home/login');
-	curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookies/cookie_' . $username . '.txt');
+	curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookies/cookie_' . hash('sha512', $username) . '.txt');
 	curl_exec($ch);
 	if (!isset($_GET['board'])) {
 		header('Location: view.php?board=1048');
@@ -23,13 +25,13 @@
 	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/Board/Detail/' . $_GET['board']); //Gets actual data from iEMB board
 	$content = curl_exec($ch);
 	curl_close($ch);
+	
 	$dom = new DOMDocument();
-
-	//Lets PHP work
+	// Download HTML from iEMB to PHP
 	@$dom->loadHTML('<!DOCTYPE html>' . $content);
 
 	//Parses messages into JSON
-	$a = 0; $unreadMessagesAsObject = []; $messagesParsed = 0;
+	$unreadMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table')->getElementsByTagName('tr') as $key=>$row) {
 		if ($key < 1) continue;
 		if ($row->getElementsByTagName('td')->item(0)->textContent == file_get_contents('viewed_box1.txt')) break;
@@ -44,15 +46,15 @@
 		$text = $row->getElementsByTagName('td')->item(2);
 		$href = $text->getElementsByTagName('a')->item(0)->getAttribute('href');
 		$href = 'msg.php?board=' . substr($href, -4) . '&message=' . substr($href, 15, -11);
-		// Real: /Board/content/26433?board=1048
+
 		$unreadMessagesAsObject[$messagesParsed]['url'] = $href;
 		$unreadMessagesAsObject[$messagesParsed]['messageTitle'] = $text->textContent;
 
-		$messagesParsed++; //Also can be used to show number of messages
+		$messagesParsed++;
 	}
 
 	//Parses messages into JSON
-	$a = 0; $readMessagesAsObject = []; $messagesParsed = 0;
+	$readMessagesAsObject = []; $messagesParsed = 0;
 	foreach ($dom->getElementById('tab_table1')->getElementsByTagName('tr') as $key=>$row) {
 		if ($key < 1) continue;
 		if ($row->getElementsByTagName('td')->item(0)->textContent == file_get_contents('viewed_box2.txt')) break;
@@ -90,7 +92,7 @@
 	</title>
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 
-	<link rel='stylesheet' type='text/css' href='/styling.css'>
+	<link rel='stylesheet' type='text/css' href='styling.css'>
 
 	<style>
 		body {
@@ -99,32 +101,7 @@
 			top: 0; right: 0;	bottom: 0; left: 0;
 		}
 		
-		.text {
-			border-radius: 0;
-			font-size: 1rem;
-			display: block;
-			width: 100%;
-			max-width: 100%;
-			height: 4.5rem;
-			margin: .25rem auto;
-			padding: .2rem;
-			border: 1px solid #eee;
-			border-bottom: 2px solid #ccc;
-			outline: none;
-		}
-
-		.text-after {
-			display: block;
-			width: calc(100% + 7px);
-			height: 2px;
-			margin: auto;
-			margin-top: calc(-2px - .25rem);
-			transition: transform ease-in-out 200ms;
-			transform: scaleX(0);
-			background-color: #9a0007;
-		}
 		
-		.text:focus + .text-after {transform: scaleX(1);}
 
 		#headerContainer {
 			height: 3rem;
@@ -568,27 +545,27 @@
 			var messagesParsed = 0;
 
 			while (messagesParsed < messagesToGet.length) {
-			var messageRow = document.createElement('div');
-					messageRow.setAttribute('id', 'a' + messagesToGet[messagesParsed].url.substr(31));
-					messageRow.className = 'message';
+				var messageRow = document.createElement('div');
+				messageRow.setAttribute('id', 'a' + messagesToGet[messagesParsed].url.substr(31));
+				messageRow.className = 'message';
 
-			var messageDate = document.createElement('div');
-					messageDate.innerHTML = messagesToGet[messagesParsed].messageDate.trim();
-					messageDate.className = 'message-date';
-					messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
+				var messageDate = document.createElement('div');
+				messageDate.innerHTML = messagesToGet[messagesParsed].messageDate.trim();
+				messageDate.className = 'message-date';
+				messageRow.innerHTML = messageRow.innerHTML + messageDate.outerHTML;
 			
-			var messageHeading = document.createElement('div');
-			messageHeading.innerHTML = messagesToGet[messagesParsed].messageTitle.trim();
-					messageHeading.className = 'message-header';
-					messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
+				var messageHeading = document.createElement('div');
+				messageHeading.innerHTML = messagesToGet[messagesParsed].messageTitle.trim();
+				messageHeading.className = 'message-header';
+				messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
 
-			var messageAuthor = document.createElement('div');
-					messageAuthor.innerHTML = messagesToGet[messagesParsed].messageAuthor.trim();
-					messageAuthor.className = 'message-username';
-					messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
+				var messageAuthor = document.createElement('div');
+				messageAuthor.innerHTML = messagesToGet[messagesParsed].messageAuthor.trim();
+				messageAuthor.className = 'message-username';
+				messageRow.innerHTML = messageRow.innerHTML + messageAuthor.outerHTML;
 
-			outputDiv.innerHTML = outputDiv.innerHTML + messageRow.outerHTML;
-			messagesParsed++;
+				outputDiv.innerHTML = outputDiv.innerHTML + messageRow.outerHTML;
+				messagesParsed++;
 			}
 		}
 
@@ -671,7 +648,83 @@
 			refreshView();
 			document.getElementById('header-read').addEventListener('click', readAll, false);
 			window.addEventListener('resize', mobileRefresh);
+			document.addEventListener('keydown', keyDown);
+			location.href = '#';
 		});
+		function keyDown(event) {
+			event = event || window.event;
+			console.log(event.keyCode);
+			if (event.keyCode == '38') {
+				event.preventDefault();
+				document.getElementById(selectMessage).previousSibling.click();
+				scrollKey();
+			}
+			else if (event.keyCode == '40') {
+				event.preventDefault();
+				document.getElementById(selectMessage).nextSibling.click();
+				scrollKey();
+			}
+			if ((event.keyCode  == 49 ||
+				 event.keyCode == 50 ||
+				 event.keyCode == 51 ||
+				 event.keyCode == 52 ||
+				 event.keyCode == 53 ||
+				 event.keyCode == 54 ||
+				 event.keyCode == 55 ||
+				 event.keyCode == 56 ||
+				 event.keyCode == 57 ||
+				 event.keyCode == 48 ||
+				 event.keyCode == 81 ||
+				 event.keyCode == 87 ||
+				 event.keyCode == 69 ||
+				 event.keyCode == 82 ||
+				 event.keyCode == 84 ||
+				 event.keyCode == 89 ||
+				 event.keyCode == 85 ||
+				 event.keyCode == 73 ||
+				 event.keyCode == 79 ||
+				 event.keyCode == 80 ||
+				 event.keyCode == 65 ||
+				 event.keyCode == 83 ||
+				 event.keyCode == 68 ||
+				 event.keyCode == 70 ||
+				 event.keyCode == 71 ||
+				 event.keyCode == 72 ||
+				 event.keyCode == 74 ||
+				 event.keyCode == 75 ||
+				 event.keyCode == 76 ||
+				 event.keyCode == 90 ||
+				 event.keyCode == 88 ||
+				 event.keyCode == 67 ||
+				 event.keyCode == 86 ||
+				 event.keyCode == 66 ||
+				 event.keyCode == 78 ||
+				 event.keyCode == 77 ||
+				 event.keyCode == 192 ||
+				 event.keyCode == 189 ||
+				 event.keyCode == 187 ||
+				 event.keyCode == 219 ||
+				 event.keyCode == 221 ||
+				 event.keyCode == 220 ||
+				 event.keyCode == 186 ||
+				 event.keyCode == 222 ||
+				 event.keyCode == 188 ||
+				 event.keyCode == 190 ||
+				 event.keyCode == 191)
+				&& ) document.getElementById('search').focus();
+		}
+		function scrollKey() {
+			var rect = document.getElementById(selectMessage).getBoundingClientRect();
+			if (window.innerHeight - rect.bottom < 70) {
+				location.href = '#' + selectMessage;
+				var style = window.getComputedStyle(document.getElementById('message-container'), null);
+				document.getElementById('message-container').scrollTop -= parseInt(style.getPropertyValue('height')) - 144;
+			}
+			else if (rect.top < 158) {
+				location.href = '#' + document.getElementById(selectMessage).id;
+				document.getElementById('message-container').scrollTop -= 72;
+			}
+		}
 	</script>
 </head>
 
@@ -709,7 +762,7 @@
 
 	<!--SEARCH-->
 	<div id='slider'>
-		<input onkeyup='updateSearchResults();' id='search' placeholder='Search...' />
+		<input onkeyup='updateSearchResults();' id='search' placeholder='Search...' tabindex='2'>
 		<!--MESSAGES-->
 		<div id='message-container'></div>
 		<div id='message-view'></div>

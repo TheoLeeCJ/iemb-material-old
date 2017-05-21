@@ -18,7 +18,7 @@
 	curl_setopt($ch, CURLOPT_POSTFIELDS, 'username=' . $username . '&password=' . $password);
 	curl_setopt($ch, CURLOPT_POSTREDIR, 2);
 	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/home/login');
-	curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookies/cookie_' . $username . '.txt');
+	curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookies/cookie_' . hash('sha512', $username) . '.txt');
 	curl_exec($ch);
 	curl_setopt($ch, CURLOPT_URL, 'https://iemb.hci.edu.sg/Board/content/' . $_GET['message'] . '?board=' . $_GET['board']);
 	// https://iemb.hci.edu.sg/Board/content/27633?board=1048
@@ -122,9 +122,9 @@
 	}
 
 	if ($original = $dom->getElementById('attaches')) {
-		echo "<hr>";
-		echo "<h3>Attachments</h3>";
-		echo "";
+		echo '<hr>';
+		echo '<h3>Attachments</h3>';
+		echo '';
 	}
 	echo '</div>';
 ?>

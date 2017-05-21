@@ -3,9 +3,7 @@
 <head>
 	<title>iEMB</title>
 	<meta name='viewport' content='width=device-width,initial-scale=1'>
-
-	<link rel='stylesheet' type='text/css' href='https://necolas.github.io/normalize.css/7.0.0/normalize.css'>
-	<link rel='stylesheet' type='text/css' href='/styling.css'>
+	<link rel='stylesheet' type='text/css' href='styling.css'>
 
 	<style>
 		#margin-top, #margin-bottom {
@@ -14,26 +12,13 @@
 		}
 
 		.text {
-			border-radius: 0;
-			font-size: 1rem;
-			display: block;
-			width: 22.5rem; max-width: 100%; height: 1.75rem;
-			margin: .25rem auto;
-			padding: .2rem;
-			border: none; border-bottom: 2px solid #ccc;
-			outline: none;
+			width: 22.5rem; height: 1.75rem;
+			border-top: none;
+			border-left: none;
+			border-right: none;
 		}
 		
-		.text-after {
-			display: block;
-			width: 22.9rem; height: 2px;
-			margin: auto; margin-top: calc(-2px - .25rem);
-			transition: transform ease-in-out 200ms;
-			transform: scaleX(0);
-			background-color: #9a0007;
-		}
-
-		.text:focus + .text-after { transform: scaleX(1); }
+		.text-after {width: 22.9rem;}
 
 		#form-container {
 			overflow-x: hidden;
@@ -79,7 +64,7 @@
 			line-height: 2rem;
 		}
 
-		.clearfix { clear: both; }
+		#clearfix { clear: both; }
 
 		@media screen and (max-width: 30rem) {
 			#margin-top, #margin-bottom {display: none;}
@@ -138,7 +123,7 @@
 			<div class='text-after'></div>
 
 			<input type='submit' id='button' value='Log In'>
-			<div class='clearfix'></div>
+			<div id='clearfix'></div>
 			<?php
 				session_start();
 				if (isset($_SESSION['logged_in'])) {
@@ -168,12 +153,14 @@
 		</form>
 
 		<!--Skin selection - implement soon-->
+		<!-- How about we use User Agent, redirect android to material, iOS to iOS?
+		Also, we're mot started with either yet -->
 		<!--<div id="SkinSelect">
 			Appearance: 
 			<select id="SkinSelect-Box" style="box-shadow: none;">
 				<option selected>iEMB 2.0</option>
 				<option>iEMB</option>
-				<option>Human</option>
+				<option>Apple Design</option>
 				<option>Material</option>
 			</select>
 		</div>-->
