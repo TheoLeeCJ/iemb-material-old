@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang='en-SG'>
+<head>
+	<title>About Us • iEMB</title>
+	<meta name='viewport' content='width=device-width,initial-scale=1'>
+	<link rel='stylesheet' type='text/css' href='styling.css'>
+	<style>
+		section {padding: 1rem;}
+		#first {
+			background-color: #f44336;
+			color: #fff;
+			height: 10rem;
+			position: -webkit-sticky;
+			position: sticky;
+			top: -7rem;
+		}
+		#first h1 {
+			position: absolute;
+			bottom: 1rem;
+			left: 1rem;
+		}
+		.middle {text-align: center;}
+		.fifty {width: 47%;}
+		.right {float: right;}
+		.left {float: left;}
+		.clear {clear: both;}
+		#content {z-index: -2;}
+		.smallprint {
+			font-weight: 100;
+			font-size: .5rem;
+			color: #666;
+			margin-top: 1rem;
+		}
+		.mright {margin-right: 2rem;}
+		@media screen and (max-width: 1024px) {
+			.left, .right {float: none;}
+			.fifty {width: calc(100% - 2rem);}
+			.mright {margin-right: 0;}
+		}
+	</style>
+	<script>
+
+	</script>
+</head>
+<body>
+	<section id='first'><h1>iEMB 2.0</h1></section>
+	<div id='content'>
+		<section>
+			<h2 class='fifty left'>A better portal for students</h2>
+			<img class='fifty right' src='screenshot.png'>
+			<div class='fifty left'>
+				The new iEMB is a huge step up from the default<br>
+				It helps students' productivity, with its new side-panel for viewing messages, speeding things up<br>
+				The page size is smaller, saving precious mobile data<br>
+				The read all button helps students clear messages they don't need<br>
+				<h4>And it just plain looks better</h4>
+		</section>
+		<div class='clear'></div>
+		<section id='fast' class='fifty left'>
+			<h2>Fast</h2>
+			The new iEMB uses a side panel, allowing for faster switching<br>
+			It sports keyboard navigation, using the up/down arrows, so students need not reach for the mouse every time<br>
+			We support better search, which is instant and relevant, searching for the title, poster, and date, all at the same time<br>
+			Search can be run from anywhere, so students can search quickly and easily
+		</section>
+		<section id='data' class='fifty right'>
+			<h2>Data Saving</h2>
+			<div class='fifty left'>
+				The new iEMB uses much less data then the old one<br>
+				It uses less than 2KB per message on average, compared to almost 600 before
+			</div>
+			<img class='fifty right' src='data.png'>
+			<div class='clear'></div>
+		</section>
+		<div class='clear'></div>
+		<section id='responsive' class='fifty left'>
+			<h2>Responsive</h2>
+			<div class='fifty left'>
+				The new iEMB works on mobile<br>
+				It has a comprehensive and easy-to-use mobile experience<br>
+				The old iEMB, however, is not responsive, requires zooming, and <a href='#data'>takes up a lot of data</a>
+			</div>
+			<img class='fifty right' src='mobile.png'>
+			<div class='clear'></div>
+		</section>
+		<section id='secure' class='fifty right'>
+			<h2><em style='font-weight:400'>Almost</em> Secure</h2>
+			The new iEMB is as secure as it gets for a school portal<br>
+			You connect to our servers via HTTP/2.0* with HTTPS, and to the schools' with HTTP/1.1 with HTTPS**<br>
+			Our code is open source, allowing more programmers to check the code and its' integrity<br>
+			None of your data touches our servers in a manner we can read***<br>
+			<h4>If you're paranoid, you could always download it and run it yourself</h4>
+			<div class='smallprint'>
+				* If supported by your browser, or else HTTP/1.1<br>
+				** - We cannot verify your username and password through SSL/TLS, as the school does not support SFTP<br>
+				*** - Usernames are hashed with SHA-512, passwords and other data are processed without logs
+			</div>
+			<div class='clear'></div>
+		</section>
+		<div class='clear'></div>
+		<section id='upcomming'>
+			<h2>Upcomming Projects</h2>
+			<div class='left mright'>
+				Apple/Material Design
+				<ul>
+					<li>Based on browser user-agent</li>
+					<li>Fits into the user's experience better</li>
+					<li>More immersive</li>
+				</ul>
+			</div>
+			<div class='left mright'>
+				Offline mode
+				<ul>
+					<li>Through service worker</li>
+					<li>Download all button</li>
+					<li>Offline reading of messages when needed</li>
+				</ul>
+			</div>
+			<div class='left mright'>
+				Faster loading
+				<ul>
+					<li>Switch to Singaporean Servers</li>
+					<li>Optimize Code</li>
+					<li>Reduce cURL requests</li>
+				</ul>
+			</div>
+			<div class='clear'></div>
+		</section>
+	</div>
+</body>
+</html>
