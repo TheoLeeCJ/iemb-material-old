@@ -48,3 +48,25 @@ body {
 }
 
 .text:focus + .text-after {transform: scaleX(1);}
+
+h1 {
+  font-size: 2.5rem;
+  line-height: 3rem;
+  margin: 0;
+}
+h2 {
+  font-size: 2rem;
+  line-height: 3rem;
+  margin: 0;
+}
+h3 {
+  font-size: 1.5rem;
+  line-height: 2.25rem;
+  margin: 0;
+}
+h4 {
+  font-size: 1rem;
+  line-height: 1.5rem;
+  margin: 0;
+  display: inline;
+}

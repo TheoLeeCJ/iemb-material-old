@@ -122,9 +122,17 @@
 	}
 
 	if ($original = $dom->getElementById('attaches')) {
-		echo '<hr>';
-		echo '<b>Attachments</b><br>';
-		echo 'Attachments can\'t be displayed as of now... We apologise for any inconvenience caused.';
+		echo '<div id=\'attaches\'>';
+		echo '<strong>Attachments</strong><br>';
+		$attaches = explode(';', explode(PHP_EOL, $content)[222]);
+		for ($i = 0; $i < count($attaches) - 1; $i++) {
+			$attach = $attaches[$i];
+			$begin = strpos($attach, 'addConfirmedChild') + 30;
+			$end = strpos($attach, "','", $begin) - $begin;
+			$attachName = substr($attach, $begin, $end);
+			echo '<a href=\'getAttach.php?name=' . rawurlencode($attachName) . '&message=' . $_GET['message'] . '&board=' . $_GET['board'] . '\'>' . $attachName . '</a><br>';
+		}
+		echo '</div>';
 	}
 	echo '</div>';
 ?>
