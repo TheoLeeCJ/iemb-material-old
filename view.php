@@ -125,8 +125,6 @@
 			background-color: #9a0007;
 		}
 
-		.text:focus + .text-after {transform: scaleX(1);}
-
 		#headerContainer {
 			height: 3rem;
 			background-color: #f44336;
