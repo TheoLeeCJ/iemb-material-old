@@ -3,7 +3,6 @@
 <head>
 	<title>iEMB</title>
 	<meta name='viewport' content='width=device-width,initial-scale=1'>
-	
 	<link rel='stylesheet' type='text/css' href='styling.css'>
 
 	<style>
@@ -21,6 +20,17 @@
 		
 		.text-after {width: 22.9rem;}
 
+		#links {
+			font-size: .75rem;
+			text-transform: uppercase;
+			margin-top: .5rem;
+		}
+		#links a {
+			text-decoration: none;
+			color: #666;
+			margin-right: .5rem;
+		}
+
 		#form-container {
 			overflow-x: hidden;
 			width: 22.9rem;
@@ -30,6 +40,7 @@
 			padding-top: 0;
 			background-color: #fff;
 			box-shadow: 0 2px 2px 0 rgba(0, 0, 0, .14), 0 3px 1px -2px rgba(0, 0, 0, .12), 0 1px 5px 0 rgba(0, 0, 0, .2);
+			overflow: hidden;
 		}
 
 		#background-container {
@@ -77,6 +88,7 @@
 				min-height: calc(100% - 2rem);
 				height: calc(100% - 2rem);
 				margin-bottom: 0;
+				overflow: scroll;
 			}
 
 			.text {width: 100%;}
@@ -151,6 +163,10 @@
 					else echo '<div style="margin-top:1.5rem">Please enter your credentials</div>';
 				}
 			?>
+			<div id='links'>
+				<a href='about.html'>About Us</a>
+				<a href='privacy.html'>Privacy Policy</a>
+			</div>
 		</form>
 
 		<!--Skin selection - implement soon-->
