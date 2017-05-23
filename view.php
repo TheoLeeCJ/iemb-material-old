@@ -1,12 +1,5 @@
 <?php
 	require 'credentials.php';
-	// session_start();
-	if (isset($_SESSION['logged_in'])) {
-		if (!isset($_SESSION['username']) || !isset($_SESSION['password'])) {
-			header('Location: index.php?again=true');
-			exit('An error has occured. Please log in again <a href=\'index.php\'>here</a>');
-		}
-	}
 	$username = $_SESSION['username'];
 	$password = $_SESSION['password'];
 	$ch = curl_init();
@@ -93,8 +86,406 @@
 	<meta name='viewport' content='width=device-width, initial-scale=1.0' />
 
 	<link rel='stylesheet' type='text/css' href='styling.css'>
-	<link rel='stylesheet' type='text/css' href='board-styling.css'>
 
+	<style>
+		body {
+			cursor: default;
+			position: absolute;
+			top: 0; right: 0;	bottom: 0; left: 0;
+		}
+		
+		.text {
+			border-radius: 0;
+			font-size: 1rem;
+			display: block;
+			width: 100%;
+			height: 4.5rem;
+			margin: .25rem auto;
+			padding: .2rem;
+			border: 1px solid #eee;
+			border-bottom: 2px solid #ccc;
+			outline: none;
+		}
+
+		.text-after {
+			display: block;
+			width: calc(100% + 7px);
+			height: 2px;
+			margin: auto;
+			margin-top: calc(-2px - .25rem);
+			transition: transform ease-in-out 200ms;
+			transform: scaleX(0);
+			background-color: #9a0007;
+		}
+
+		#headerContainer {
+			height: 3rem;
+			background-color: #f44336;
+			color: #fff;
+			line-height: 3rem;
+			font-size: 1.5rem;
+			padding: 0 1.5rem;
+			position: fixed;
+			z-index: 1;
+			width: calc(100% - 48px);
+			overflow: hidden;
+		}
+		header {
+			height: 6rem;
+			transform: translateY(-50%);
+			transition: transform 250ms ease-in-out;
+		}
+		header #right {float: right;}
+		header #header-logout {
+			color: #fff;
+			text-decoration: none;
+			margin-left: 1rem;
+		}
+
+		#readAllProgress {
+			height: 3rem;
+			display: block;
+			width: 100%;
+		}
+
+		/*Side menu*/
+		nav {
+			display: block;
+			position: fixed;
+			z-index: 3;
+			top: 0;
+			left: 0;
+			height: 100%;
+			background-color: #d32f2f;
+			max-width: 75%;
+			width: 15rem;
+			transform: translateX(-100%);
+			transition: transform 350ms ease-in-out;
+			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
+		}
+		nav a {
+			display: block;
+			color: #fff;
+			text-decoration: none;
+			font-size: 1.5rem;
+			line-height: 3rem;
+			padding-left: 1rem;
+			position: relative;
+		}
+		nav a:after {
+			position: absolute;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			content: '';
+			background-color: #b71c1c;
+			z-index: -1;
+			opacity: 0;
+		}
+		nav a:hover:after {opacity: 1;}
+		nav img {
+			width: calc(100% - 4rem);
+			display: block;
+			padding: 2rem;
+			background-image: linear-gradient(to bottom, #ffebee 30%, #ffcdd2 50%, #d32f2f);
+		}
+		#navOpen:checked ~ nav {transform: translateX(0);}
+		#navOverlay {
+			opacity: 0;
+			background-color: #000;
+			pointer-events: none;
+			position: fixed;
+			top: 0;
+			left: 0;
+			bottom: 0;
+			right: 0;
+			z-index: 2;
+			transition: opacity 350ms ease-in-out;
+		}
+		#navOpen:checked ~ #navOverlay {
+			opacity: .5;
+			width: 100%;
+			pointer-events: auto;
+		}
+		#navOpen {display: none;}
+		label {cursor: pointer;}
+		p {margin: 0;}
+		
+		#message-container, #messageContainer2 {
+			width: 40%;
+			float: left;
+			border-right: 1px solid #000;
+			position: absolute;
+			top: 72px;
+			height: calc(100%);
+			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		.message {
+			color: #000;
+			text-decoration: none;
+			border-bottom: 1px solid #000;
+			display: block;
+			margin: 0 .5rem;
+			padding-top: .5rem;
+			padding-bottom: 1rem;
+			padding-left: .5rem; padding-right: .5rem;
+			cursor: pointer;
+		}
+		
+		.message-header, .message-date, .message-username {
+			text-overflow: ellipsis;
+			overflow: hidden;
+			white-space: nowrap;
+		}
+
+		.message-header {font-size: 1.2rem;}
+		.message-date {float: right;}
+		.message-username {clear: right;}
+
+		#view-header {
+			margin: 1rem;
+			margin-bottom: .5rem;
+			padding-bottom: .25rem;
+			border-bottom: 1px solid #000;
+		}
+		#view-header-in {float: left;}
+		#view-header:after {
+			display: block;
+			clear: both;
+			content: '';
+			width: 100%;
+		}
+
+		#view-body {padding: 0 calc(1rem - 5px);}
+
+		#message-view {
+			width: calc(60% - 2px);
+			position: absolute;
+			right: 0;
+			height: calc(100% + 72px);
+			top: 0;
+			overflow-y: scroll;
+			-webkit-overflow-scrolling: touch;
+		}
+
+		#search {
+			width: calc(40% - 2rem);
+			border: 0;
+			border-bottom: 1px solid #000;
+			border-right: 1px solid #000;
+			border-radius: 0;
+			position: fixed;
+			font-size: 1rem;
+			outline: none;
+			padding: .5rem 1rem;
+		}
+		#bookmarks {
+			width: calc(40% + 1px);
+			border: 0;
+			border-bottom: 1px solid #000;
+			border-right: 1px solid #000;
+			border-radius: 0;
+			position: absolute;
+			top: calc(2rem + 3px);
+			left: 0;
+			padding: .5rem;
+			outline: none;
+			background-color: #fff;
+			text-transform: uppercase;
+			display: block;
+			font-size: 1rem;
+			-webkit-appearance: button;
+			cursor: pointer;
+		}
+
+		#slider {
+			width: 100%;
+			position: relative;
+			height: calc(100% - 120px);
+			top: 48px;
+			transition: 200ms ease-in-out transform;
+		}
+
+		@media screen and (max-width: 800px) {
+			#header-name {display: none;}
+
+			header {
+				padding: 0 .75rem;
+				width: calc(100% - 1.5rem);
+			}
+
+			#search {
+				width: calc(50% - 2rem);
+				position: relative;
+				border-right: none;
+			}
+			#bookmarks {
+				width: 50%;
+				border-right: 0;
+			}
+
+			#message-container, #message-view, #messageContainer2 {
+				border: none;
+				width: 50%;
+				height: 100%;
+			}
+			#message-view {height: calc(100% + 72px)}
+
+			#slider {width: 200%;}
+		}
+
+		/*Loading spinner - displays when client waits for server to get a message*/
+		#loadingSpinner {
+			border: 16px solid #ccc;
+			border-top: 16px solid #f44336;
+			border-radius: 50%;
+			width: 120px;
+			height: 120px;
+			animation: spin 1s linear infinite;
+			position: relative;
+			left: calc(50% - 60px);
+			top: calc(50% - 60px);
+			line-height: 120px;
+			text-align: center;
+		}
+		#loadingSpinner:after {
+			content: 'Loading...';
+			display: block;
+			animation: backSpin 1s linear infinite reverse;
+		}
+		@keyframes spin {
+			0% {transform: rotate(0deg);}
+			100% {transform: rotate(360deg);}
+		}
+		@keyframes backSpin {
+			0% {transform: rotate(0deg);}
+			100% {transform: rotate(360deg);}
+		}
+
+		label {
+			cursor: pointer;
+			margin-right: 8px;
+			position: relative;
+			top: 6px;
+		}
+
+		/*Defines radio button styles for response*/
+		.radioStyle {
+			height: 12px;
+			width: 12px;
+			margin-bottom: -2px;
+			border-radius: 50%;
+			display: inline-block;
+			border: 2px solid #000;
+			position: relative;
+			z-index: 1;
+		}
+
+		.radio:checked + label .radioStyle:before {transform: scale(4, 4);}
+		.radio:checked + label .radioStyle {border-color: #9a0007;}
+
+		.radio:checked + label .radioStyle:after {
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			content: ' ';
+			background-color: #9a0007;
+			opacity: .5;
+			height: 16px;
+			width: 16px;
+			transform: scale(0, 0);
+			position: absolute;
+			left: -2px;
+			top: -2px;
+			border-radius: 50%;
+			animation: selectRipple 200ms;
+			z-index: 1;
+		}
+
+		.radioStyle:before {
+			-webkit-backface-visibility: hidden;
+			backface-visibility: hidden;
+			content: '';
+			background-color: #9a0007;
+			height: 2px;
+			width: 2px;
+			transform: scale(0, 0);
+			position: absolute;
+			left: 5px;
+			top: 5px;
+			border-radius: 1px;
+			transition: transform 200ms ease-in-out;
+			z-index: -1;
+		}
+
+		.radio {display: none;}
+
+		@keyframes selectRipple {
+			0% {transform: scale(0, 0) translateZ(0);}
+			75% {transform: scale(1.5, 1.5) translateZ(0);}
+			100% {transform: scale(0, 0) translateZ(0);}
+		}
+
+		.transformed {
+			transform: translateX(-50%);
+			height: calc(100% - 48px);
+		}
+
+		/*Top menu icon - morphs on mobile*/
+		.Hotdog {
+			display: inline-block;
+			cursor: pointer;
+		}
+
+		.HotdogBun1, .HotdogSausage, .HotdogBun2 {
+			width: 20px;
+			height: 3px;
+			background-color: white;
+			margin: 6px 0;
+			transition: 0.4s;
+		}
+
+		@media screen and (max-width: 800px) {
+			label {
+				left: -20px;
+			}
+
+			.change .HotdogBun1 {
+				transform:
+				rotate(-45deg)
+				translate(-15px, -6px)
+				scale(0.5, 1);
+			}
+
+			.change .HotdogSausage {
+				transform: translate(-9px, 0px);
+			}
+
+			.change .HotdogBun2 {
+				transform:
+				rotate(45deg)
+				translate(-15px, 6px)
+				scale(0.5, 1);
+			}
+		}
+		#attaches {margin: 2rem 0 0 .25rem;}
+		.bookmark:before {
+			content: '• ';
+			color: #9a0007;
+			display: inline;
+		}
+		#messageContainer2 {display: none;}
+		.bookmarks #messageContainer2 {display: block;}
+		.bookmarks #message-container {display: none;}
+		
+		.bookmarks #bookmarks {
+			background-color: #9a0007;
+			color: #fff;
+		}
+	</style>
 	<script>
 		//Updates search results based on user's search
 		function updateSearchResults() {
@@ -197,6 +588,10 @@
 				messageHeading.innerHTML = messagesToGet[messagesUnread].messageTitle.trim();
 				messageHeading.className = 'message-header';
 				messageHeading.style.fontWeight = 'bold';
+				if (localStorage.getItem('bookmark_a' + messagesToGet[messagesUnread].url.substr(31)) !== null){
+					messageHeading.classList.add('bookmark');
+					messageRow.classList.add('bookmark-parent');
+				}
 				messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
 
 				var messageAuthor = document.createElement('div');
@@ -225,6 +620,10 @@
 				var messageHeading = document.createElement('div');
 				messageHeading.innerHTML = messagesToGet[messagesParsed].messageTitle.trim();
 				messageHeading.className = 'message-header';
+				if (localStorage.getItem('bookmark_a' + messagesToGet[messagesParsed].url.substr(31)) !== null){
+					messageHeading.classList.add('bookmark');
+					messageRow.classList.add('bookmark-parent');
+				}
 				messageRow.innerHTML = messageRow.innerHTML + messageHeading.outerHTML;
 
 				var messageAuthor = document.createElement('div');
@@ -248,10 +647,47 @@
 			selectMessage = this.id;
 			var request = new XMLHttpRequest();
 			request.onreadystatechange = function() {
-				if (this.readyState === 4 && this.status === 200) document.getElementById('message-view').innerHTML = this.responseText;
-			};
-			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1), true);
+				if (this.readyState === 4 && this.status === 200) {
+					document.getElementById('message-view').innerHTML = this.responseText;
+					var node = document.createElement('input');
+					node.setAttribute('type', 'button');
+					node.setAttribute('value', 'bookmark');
+					node.classList.add('button');
+					node.style.float = 'right';
+					node.addEventListener('click', bookmark, false);
+					document.getElementById('view-header').appendChild(node);
+					document.getElementById(selectMessage).getElementsByClassName('message-header')[0].removeAttribute('style');
+				}
+			}
+			request.open('GET', 'getmessage.php?board='+<?php echo $_GET['board'] ?>+'&message='+this.id.substr(1, 5), true);
 			request.send();
+		}
+
+		function bookmark() {
+			var name = 'bookmark_' + selectMessage.substr(0, 6);
+			console.log(name);
+			if (localStorage.getItem(name) === null) {
+				localStorage.setItem(name, selectMessage.substr(0, 6));
+				var node = document.createElement('div');
+				node.id = selectMessage.substr(0, 6) + '-bookmark';
+				node.innerHTML = document.getElementById(selectMessage.substr(0, 6)).innerHTML;
+				node.classList.toggle('bookmark-parent');
+				node.classList.toggle('message');
+				document.getElementById('messageContainer2').appendChild(node);
+				document.getElementById(selectMessage.substr(0, 6) + '-bookmark').getElementsByTagName('div')[1].classList.add('bookmark');
+			}
+			else {
+				localStorage.removeItem(name);
+				document.getElementById('messageContainer2').removeChild(document.getElementById(selectMessage.substr(0, 6) + '-bookmark'));
+				selectMessage = messages[0].id;
+				document.getElementById(selectMessage.substr(0, 6)).classList.toggle('bookmark-parent');
+				document.getElementById(selectMessage.substr(0, 6)).getElementsByTagName('div')[1].classList.toggle('bookmark');
+			}
+			document.getElementById(selectMessage.substr(0, 6)).getElementsByTagName('div')[1].classList.toggle('bookmark');
+			refreshView();
+		}
+		function showBookmarks() {
+			document.getElementById('slider').classList.toggle('bookmarks');
 		}
 
 		//Adds click handlers to messages
@@ -318,10 +754,18 @@
 			window.addEventListener('resize', mobileRefresh);
 			document.addEventListener('keydown', keyDown);
 			location.href = '#';
+			var node = document.createElement('div');
+			node.id = 'messageContainer2';
+			var temp = '';
+			var elem = document.getElementsByClassName('bookmark-parent');
+			for (i = 0; i < elem.length; i++) temp += elem[i].outerHTML;
+			node.innerHTML = temp;
+			for (i = 0; i < elem.length; i++) node.getElementsByClassName('message')[i].id += '-bookmark';
+			document.getElementById('slider').insertBefore(node, document.getElementById('message-container'));
+			refreshView();
 		});
 		function keyDown(event) {
 			event = event || window.event;
-			console.log(event.keyCode);
 			if (event.keyCode == '38') {
 				event.preventDefault();
 				document.getElementById(selectMessage).previousSibling.click();
@@ -406,14 +850,7 @@
 					<div class='HotdogSausage'></div>
 					<div class='HotdogBun2'></div>
 				</div>
-			</label> 
-			<?php
-				if ($_GET['board'] == '1048') { echo 'Student Board |'; }
-				else if ($_GET['board'] == '1050') { echo 'Lost and Found |'; }
-				else if ($_GET['board'] == '1049') { echo 'PSB Board |'; }
-				else if ($_GET['board'] == '1039') { echo 'Service Board |'; }
-				else if ($_GET['board'] == '1053') { echo 'Let\'s Serve! |'; }
-			?> iEMB
+			</label> iEMB
 			<div id='right'>
 				<span id='header-name'>Welcome, <?php echo $username; ?></span>
 				<span id='header-read'>Read all</span>
@@ -431,14 +868,13 @@
 		<a href='view.php?board=1049'>PSB</a>
 		<a href='view.php?board=1039'>Service</a>
 		<a href='view.php?board=1053'>Let's Serve!</a>
-    <hr>
-		<a href='/help'>Help</a>
 	</nav>
 	<label for='navOpen' id='navOverlay'></label>
 
 	<!--SEARCH-->
 	<div id='slider'>
 		<input onkeyup='updateSearchResults();' id='search' placeholder='Search...' tabindex='2'>
+		<input type='button' onclick='showBookmarks();' id='bookmarks' value='Bookmarks' tabindex='2'>
 		<!--MESSAGES-->
 		<div id='message-container'></div>
 		<div id='message-view'></div>

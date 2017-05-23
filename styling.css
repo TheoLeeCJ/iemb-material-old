@@ -8,7 +8,7 @@ body {
   height: 100%;
 }
 
-#button {
+.button {
   background-color: #9a0007; color: #fff;
   margin-top: 1.5rem;
   text-transform: uppercase;

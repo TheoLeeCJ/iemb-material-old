@@ -10,7 +10,7 @@
 		exit();
 	}
 	// Get Credentials
-	session_start();
+	require 'credentials.php';
 	$username = $_SESSION['username'];
 	$password = $_SESSION['password'];
 	// Send Response via cURL

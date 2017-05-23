@@ -135,10 +135,14 @@
 			<input type='password' class='text' name='password' placeholder='Password'>
 			<div class='text-after'></div>
 
-			<input type='submit' id='button' value='Log In'>
+			<input type='submit' class='button' value='Log In'>
 			<div id='clearfix'></div>
 			<?php
+				// session_set_cookie_params(300, '/', '.locahost', true, true);
+				// session_set_cookie_params(300, '/', '.iemb.ml', true, true);
+				// above for uploaded file
 				session_start();
+				$_SESSION['canary'] = time();
 				if (isset($_SESSION['logged_in'])) {
 					if (isset($_SESSION['username']) && isset($_SESSION['password'])) {
 						header('Location: view.php');

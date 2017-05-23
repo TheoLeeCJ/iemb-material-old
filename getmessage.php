@@ -3,13 +3,7 @@
 	  This file is responsible for retrieiving messages from the actual iEMB and sending the response to view.php when user wants to view a message.
 	*/
 
-	session_start();
-	if (isset($_SESSION['logged_in'])) {
-		if (!isset($_SESSION['username']) || !isset($_SESSION['password'])) {
-			header('Location: index.php?again=true');
-			exit('An error has occured. Please log in again <a href=\'index.php\'>here</a>');
-		}
-	}
+	require 'credentials.php';
 	$username = $_SESSION['username'];
 	$password = $_SESSION['password'];
 	$ch = curl_init();
@@ -28,7 +22,7 @@
 	@$dom->loadHTML('<!DOCTYPE html>' . $content);
 	$finder = new DOMXpath($dom);
 	$spaner = $finder->query('//*[contains(@class, \'read_message_body_div\')]');
-	echo '<div id=\'view-header\'><strong>' . substr($spaner->item(0)->getElementsByTagName('div')->item(6)->textContent, 7) . '</strong><br>';
+	echo '<div id=\'view-header\'><div id=\'view-header-in\'><strong>' . substr($spaner->item(0)->getElementsByTagName('div')->item(6)->textContent, 7) . '</strong><br>';
 	echo substr($spaner->item(0)->getElementsByTagName('div')->item(7)->textContent, 7) . '<br>';
 	echo substr($spaner->item(0)->getElementsByTagName('div')->item(9)->textContent, 7) . '<br></div>';
 	if ($imgs = $spaner->item(0)->getElementsByTagName('div')->item(14)->getElementsByTagName('img')) {
@@ -42,6 +36,7 @@
 			}
 		}
 	}
+	echo '</div></div>';
 	$text = $dom->saveXML($spaner->item(0)->getElementsByTagName('div')->item(14));
 	echo '<div id=\'view-body\'>';
 	echo $text;
@@ -108,7 +103,7 @@
 		}
 		$formElem->appendChild($inputDiv);
 		$submit = $form->createElement('input');
-		$submit->setAttribute('id', 'button');
+		$submit->setAttribute('class', 'button');
 		$submit->setAttribute('type', 'submit');
 		$submit->setAttribute('value', 'Respond');
 		$submit->setAttribute('name', 'PostMessage');
