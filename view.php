@@ -497,9 +497,11 @@
 				refreshView();
 			}
 			else {
+				var old = selectMessage.substr(0, 6);
 				document.getElementById('message-container').innerHTML = '';
 				searchMessages(document.getElementById('search').value.toLowerCase());
 				refreshView();
+				selectMessage = document.getElementById(old) ? old : document.getElementsByClassName('message')[0].id;
 			}
 		}
 
@@ -668,7 +670,6 @@
 		function bookmark() {
 			var old = selectMessage.substr(0, 6);
 			var name = 'bookmark_' + selectMessage.substr(0, 6);
-			console.log(name);
 			if (localStorage.getItem(name) === null) {
 				localStorage.setItem(name, selectMessage.substr(0, 6));
 				var node = document.createElement('div');
@@ -678,14 +679,11 @@
 				node.classList.toggle('message');
 				document.getElementById('messageContainer2').appendChild(node);
 				document.getElementById(selectMessage.substr(0, 6) + '-bookmark').getElementsByTagName('div')[1].classList.add('bookmark');
-				console.log(1);
 			}
 			else {
 				localStorage.removeItem(name);
 				document.getElementById('messageContainer2').removeChild(document.getElementById(selectMessage.substr(0, 6) + '-bookmark'));
 				document.getElementById(selectMessage.substr(0, 6)).classList.toggle('bookmark-parent');
-				document.getElementById(selectMessage.substr(0, 6)).getElementsByTagName('div')[1].classList.toggle('bookmark');
-				console.log(2);
 			}
 			document.getElementById(selectMessage.substr(0, 6)).getElementsByTagName('div')[1].classList.toggle('bookmark');
 			refreshView();
