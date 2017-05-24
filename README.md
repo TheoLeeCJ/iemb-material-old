@@ -1,16 +1,21 @@
 # iEMB 2.0
 ## A new iEMB for students at Hwa Chong
+### Free, Fast, Open-Source, Data-Saving, and Responsive.
 
-Hwa Chong has a history of having underpowered, low-quality portals for their students. This project aims to change that.
+This project is a third-party client of the iEMB portal by Hwa Chong.
 
-This project will be a new version of the Intergrated e-Message Board, which helps propogate data within the school.
+## Usage
 
-It will feature changes which include
-* A better interface
-* Improved productivity
+You may go to our hosted website at https://iemb.ml
 
-This project will **not** propogate to teachers' boards.
+Login credentials are the same as those used on the first-party iEMB
 
-## CODE REVIEW STAGE
-Report issues in the Issues tab in the following syntax: ISSUE: *title*
-Suggest features in the Issues tab in the following syntax: FEATURE REQUEST: *title*
+Or, you may compile the code and edit it yourself by:
+1. Downloading the source code by clicking Clone or Download -> Download ZIP
+2. Ensure you have a webserver with:
+  * PHP 7
+  * cURL Support
+  * FTP Support
+  * PHP DOM Support
+3. Unzip the source code into the webserver's "htdocs" server or equivalent
+4. Open localhost/*your directory*
