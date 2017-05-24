@@ -264,6 +264,7 @@
 
 		#message-view {
 			width: calc(60% - 2px);
+			max-width: calc(60% - 2px);
 			position: absolute;
 			right: 0;
 			height: calc(100% + 72px);
@@ -485,6 +486,7 @@
 			background-color: #9a0007;
 			color: #fff;
 		}
+		table, tr, td, img {max-width: 100%;}
 	</style>
 	<script>
 		//Updates search results based on user's search
@@ -777,52 +779,54 @@
 				scrollKey();
 			}
 			if (event.keyCode  == 49 ||
-				 event.keyCode == 50 ||
-				 event.keyCode == 51 ||
-				 event.keyCode == 52 ||
-				 event.keyCode == 53 ||
-				 event.keyCode == 54 ||
-				 event.keyCode == 55 ||
-				 event.keyCode == 56 ||
-				 event.keyCode == 57 ||
-				 event.keyCode == 48 ||
-				 event.keyCode == 81 ||
-				 event.keyCode == 87 ||
-				 event.keyCode == 69 ||
-				 event.keyCode == 82 ||
-				 event.keyCode == 84 ||
-				 event.keyCode == 89 ||
-				 event.keyCode == 85 ||
-				 event.keyCode == 73 ||
-				 event.keyCode == 79 ||
-				 event.keyCode == 80 ||
-				 event.keyCode == 65 ||
-				 event.keyCode == 83 ||
-				 event.keyCode == 68 ||
-				 event.keyCode == 70 ||
-				 event.keyCode == 71 ||
-				 event.keyCode == 72 ||
-				 event.keyCode == 74 ||
-				 event.keyCode == 75 ||
-				 event.keyCode == 76 ||
-				 event.keyCode == 90 ||
-				 event.keyCode == 88 ||
-				 event.keyCode == 67 ||
-				 event.keyCode == 86 ||
-				 event.keyCode == 66 ||
-				 event.keyCode == 78 ||
-				 event.keyCode == 77 ||
-				 event.keyCode == 192 ||
-				 event.keyCode == 189 ||
-				 event.keyCode == 187 ||
-				 event.keyCode == 219 ||
-				 event.keyCode == 221 ||
-				 event.keyCode == 220 ||
-				 event.keyCode == 186 ||
-				 event.keyCode == 222 ||
-				 event.keyCode == 188 ||
-				 event.keyCode == 190 ||
-				 event.keyCode == 191) document.getElementById('search').focus();
+				event.keyCode == 50 ||
+				event.keyCode == 51 ||
+				event.keyCode == 52 ||
+				event.keyCode == 53 ||
+				event.keyCode == 54 ||
+				event.keyCode == 55 ||
+				event.keyCode == 56 ||
+				event.keyCode == 57 ||
+				event.keyCode == 48 ||
+				event.keyCode == 81 ||
+				event.keyCode == 87 ||
+				event.keyCode == 69 ||
+				event.keyCode == 82 ||
+				event.keyCode == 84 ||
+				event.keyCode == 89 ||
+				event.keyCode == 85 ||
+				event.keyCode == 73 ||
+				event.keyCode == 79 ||
+				event.keyCode == 80 ||
+				event.keyCode == 65 ||
+				event.keyCode == 83 ||
+				event.keyCode == 68 ||
+				event.keyCode == 70 ||
+				event.keyCode == 71 ||
+				event.keyCode == 72 ||
+				event.keyCode == 74 ||
+				event.keyCode == 75 ||
+				event.keyCode == 76 ||
+				event.keyCode == 90 ||
+				event.keyCode == 88 ||
+				event.keyCode == 67 ||
+				event.keyCode == 86 ||
+				event.keyCode == 66 ||
+				event.keyCode == 78 ||
+				event.keyCode == 77 ||
+				event.keyCode == 192 ||
+				event.keyCode == 189 ||
+				event.keyCode == 187 ||
+				event.keyCode == 219 ||
+				event.keyCode == 221 ||
+				event.keyCode == 220 ||
+				event.keyCode == 186 ||
+				event.keyCode == 222 ||
+				event.keyCode == 188 ||
+				event.keyCode == 190 ||
+				event.keyCode == 191) {
+				if (document.activeElement != document.getElementById('replyContent')) document.getElementById('search').focus();
+			}
 		}
 		function scrollKey() {
 			var rect = document.getElementById(selectMessage).getBoundingClientRect();

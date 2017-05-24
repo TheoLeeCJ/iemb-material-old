@@ -28,7 +28,7 @@
 	if ($imgs = $spaner->item(0)->getElementsByTagName('div')->item(14)->getElementsByTagName('img')) {
 		foreach ($imgs as $img) {
 			if (substr($img->getAttribute('src'), 0, 11) != 'data:image/') {
-				$file = substr($img->getAttribute('src'), 0, 3) != 'http' ? file_get_contents('https://iemb.hci.edu.sg/Board/content/' . $img->getAttribute('src')) : file_get_contents($img->getAttribute('src'));
+				$file = substr($img->getAttribute('src'), 0, 4) != 'http' ? file_get_contents('https://iemb.hci.edu.sg/Board/content/' . $img->getAttribute('src')) : file_get_contents($img->getAttribute('src'));
 				$f = finfo_open();
 				$imgtype = finfo_buffer($f, $file, FILEINFO_MIME_TYPE);
 				$base = base64_encode($file);
@@ -70,6 +70,7 @@
 		$input = $form->createElement('textarea');
 		$input->setAttribute('type', 'radio');
 		$input->setAttribute('name', 'replyContent');
+		$input->setAttribute('id', 'replyContent');
 		$input->setAttribute('class', 'text');
 		$input->setAttribute('placeholder', 'Comment');
 		$text = new DOMText($dom->getElementById('editArea')->textContent);
