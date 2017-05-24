@@ -666,6 +666,7 @@
 		}
 
 		function bookmark() {
+			var old = selectMessage.substr(0, 6);
 			var name = 'bookmark_' + selectMessage.substr(0, 6);
 			console.log(name);
 			if (localStorage.getItem(name) === null) {
@@ -677,16 +678,18 @@
 				node.classList.toggle('message');
 				document.getElementById('messageContainer2').appendChild(node);
 				document.getElementById(selectMessage.substr(0, 6) + '-bookmark').getElementsByTagName('div')[1].classList.add('bookmark');
+				console.log(1);
 			}
 			else {
 				localStorage.removeItem(name);
 				document.getElementById('messageContainer2').removeChild(document.getElementById(selectMessage.substr(0, 6) + '-bookmark'));
-				selectMessage = messages[0].id;
 				document.getElementById(selectMessage.substr(0, 6)).classList.toggle('bookmark-parent');
 				document.getElementById(selectMessage.substr(0, 6)).getElementsByTagName('div')[1].classList.toggle('bookmark');
+				console.log(2);
 			}
 			document.getElementById(selectMessage.substr(0, 6)).getElementsByTagName('div')[1].classList.toggle('bookmark');
 			refreshView();
+			selectMessage = old;
 		}
 		function showBookmarks() {
 			document.getElementById('slider').classList.toggle('bookmarks');
@@ -763,7 +766,7 @@
 			for (i = 0; i < elem.length; i++) temp += elem[i].outerHTML;
 			node.innerHTML = temp;
 			for (i = 0; i < elem.length; i++) node.getElementsByClassName('message')[i].id += '-bookmark';
-			document.getElementById('slider').insertBefore(node, document.getElementById('message-container'));
+			document.getElementById('slider').insertBefore(node, document.getElementById('message-view'));
 			refreshView();
 		});
 		function keyDown(event) {
