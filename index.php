@@ -107,10 +107,33 @@
 		}
 
 		#SkinSelect {
+            width: calc(100% - 130px);
+            display: inline-block;
 			margin-top: 20px;
 			cursor: default;
 		}
 	</style>
+
+    <script>
+        if ("<?php echo $_GET['skinchoice']; ?>" !== "manual") {
+	        if ((navigator.userAgent.includes("iPhone") == true) || (navigator.userAgent.includes("Mac") == true)) {
+		        if (window.location.href !== "https://iemb.cf") { window.location.href = "https://iemb.cf"; }
+		        else { /*Already on iOS port, don't redirect*/ }
+	        }
+	        else {
+		        if (window.location.href.includes("gq") == false) { window.location.href = "https://iemb.gq"; }
+		        else { /*Already on Material port, don't redirect*/ }
+	        }
+        }
+
+        function PickNewSkin() {
+            var skin = document.getElementById("SkinSelect-Box").options[document.getElementById("SkinSelect-Box").selectedIndex].value;
+
+            if (skin == "iEMB 2.0") { window.location.href = "https://iemb.gq?skinchoice=manual"; }
+            else if (skin == "iOS") { window.location.href = "https://iemb.cf?skinchoice=manual"; }
+            else if (skin == "Material") { window.location.href = "https://material.iemb.gq"; }
+        }
+    </script>
 </head>
 
 <body>
@@ -134,6 +157,16 @@
 
 			<input type='password' class='text' name='password' placeholder='Password'>
 			<div class='text-after'></div>
+            
+		    <div id="SkinSelect">
+			    Appearance: 
+			    <select id="SkinSelect-Box" onchange="PickNewSkin();" style="box-shadow: none;">
+				    <option selected>iEMB 2.0</option>
+				    <option disabled="disabled">iEMB</option>
+				    <option>iOS</option>
+				    <option>Material</option>
+			    </select>
+		    </div>
 
 			<input type='submit' class='button' value='Log In'>
 			<div id='clearfix'></div>
@@ -172,19 +205,6 @@
 				<a href='privacy.html'>Privacy Policy</a>
 			</div>
 		</form>
-
-		<!--Skin selection - implement soon-->
-		<!-- How about we use User Agent, redirect android to material, iOS to iOS?
-		Also, we're mot started with either yet -->
-		<!--<div id="SkinSelect">
-			Appearance: 
-			<select id="SkinSelect-Box" style="box-shadow: none;">
-				<option selected>iEMB 2.0</option>
-				<option>iEMB</option>
-				<option>Apple Design</option>
-				<option>Material</option>
-			</select>
-		</div>-->
 	</div>
 
 	<div id='margin-bottom'>
