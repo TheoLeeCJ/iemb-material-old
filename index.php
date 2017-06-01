@@ -115,16 +115,6 @@
 	</style>
 
     <script>
-        if ("<?php echo $_GET['skinchoice']; ?>" !== "manual") {
-	        if ((navigator.userAgent.includes("iPhone") == true) || (navigator.userAgent.includes("Mac") == true)) {
-		        if (window.location.href !== "https://iemb.cf") { window.location.href = "https://iemb.cf"; }
-		        else { /*Already on iOS port, don't redirect*/ }
-	        }
-	        else {
-		        if (window.location.href.includes("gq") == false) { window.location.href = "https://iemb.gq"; }
-		        else { /*Already on Material port, don't redirect*/ }
-	        }
-        }
 
         function PickNewSkin() {
             var skin = document.getElementById("SkinSelect-Box").options[document.getElementById("SkinSelect-Box").selectedIndex].value;
