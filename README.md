@@ -2,11 +2,13 @@
 ## A new iEMB for students at Hwa Chong
 ### Free, Fast, Open-Source, Data-Saving, and Responsive.
 
+### This repo is no longer being actively maintained.
+
 This project is a third-party client of the iEMB portal by Hwa Chong.
 
 ## Usage
 
-You may go to our hosted website at https://iemb.ml
+You may go to our hosted website at https://iemb.cf
 
 Login credentials are the same as those used on the first-party iEMB
 
